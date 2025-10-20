@@ -25,8 +25,8 @@ export const ResizeTab = () => {
 
     if (file.size > 10 * 1024 * 1024) {
       toast({
-        title: "Arquivo muito grande",
-        description: "O tamanho máximo é 10MB",
+        title: "File too large",
+        description: "Maximum size is 10MB",
         variant: "destructive",
       });
       return;
@@ -64,8 +64,8 @@ export const ResizeTab = () => {
           });
           
           toast({
-            title: "Imagem processada!",
-            description: "Sua thumbnail está pronta para download",
+            title: "Image processed!",
+            description: "Your thumbnail is ready for download",
           });
         }
       };
@@ -97,9 +97,9 @@ export const ResizeTab = () => {
     <div className="max-w-4xl mx-auto">
       <Card className="p-6 md:p-8">
         <CardHeader className="px-0 pt-0">
-          <CardTitle className="text-2xl md:text-3xl">Redimensionar Thumbnail</CardTitle>
+          <CardTitle className="text-2xl md:text-3xl">Resize Thumbnail</CardTitle>
           <CardDescription>
-            Converta sua imagem para o tamanho ideal do YouTube (1280×720)
+            Convert your image to the ideal YouTube size (1280×720)
           </CardDescription>
         </CardHeader>
         <CardContent className="px-0 pb-0">
@@ -122,11 +122,11 @@ export const ResizeTab = () => {
                 </div>
                 <div className="upload-actions">
                   <p className="upload-hint" aria-live="polite">
-                    <span className="hint-icon" role="img" aria-label="Anexos">📎</span>
-                    <span className="hint-text">JPG, PNG, WEBP até 10MB</span>
+                    <span className="hint-icon" role="img" aria-label="Attachments">📎</span>
+                    <span className="hint-text">JPG, PNG, WEBP up to 10MB</span>
                   </p>
                   <button className="btn-upload" type="button">
-                    Selecionar Imagem
+                    Select Image
                   </button>
                 </div>
               </label>
@@ -136,7 +136,7 @@ export const ResizeTab = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <Card className="p-4 space-y-2">
                   <div className="flex justify-between items-center">
-                    <h3 className="font-semibold">Imagem Original</h3>
+                    <h3 className="font-semibold">Original Image</h3>
                     <span className="text-xs text-muted-foreground">
                       {originalDimensions ? `${originalDimensions.width} × ${originalDimensions.height}` : '1280 × 720'}
                     </span>
@@ -167,15 +167,15 @@ export const ResizeTab = () => {
               {imageInfo && (
                 <div className="grid grid-cols-3 gap-4">
                   <Card className="p-4 text-center">
-                    <p className="text-xs text-muted-foreground mb-1">📎 Formato</p>
+                    <p className="text-xs text-muted-foreground mb-1">📎 Format</p>
                     <p className="font-semibold">{imageInfo.format}</p>
                   </Card>
                   <Card className="p-4 text-center">
-                    <p className="text-xs text-muted-foreground mb-1">📊 Tamanho</p>
+                    <p className="text-xs text-muted-foreground mb-1">📊 Size</p>
                     <p className="font-semibold">{imageInfo.originalSize.toFixed(2)} KB</p>
                   </Card>
                   <Card className="p-4 text-center">
-                    <p className="text-xs text-muted-foreground mb-1">📐 Proporção</p>
+                    <p className="text-xs text-muted-foreground mb-1">📐 Aspect Ratio</p>
                     <p className="font-semibold">{imageInfo.aspectRatio}</p>
                   </Card>
                 </div>
@@ -184,10 +184,10 @@ export const ResizeTab = () => {
               <div className="flex gap-3 justify-center flex-wrap">
                 <Button onClick={handleDownload} size="lg" className="gap-2">
                   <DownloadIcon className="w-4 h-4" />
-                  Baixar Thumbnail
+                  Download Thumbnail
                 </Button>
                 <Button onClick={handleNewImage} variant="outline" size="lg" className="gap-2">
-                  🔄 Nova Imagem
+                  🔄 New Image
                 </Button>
               </div>
             </div>

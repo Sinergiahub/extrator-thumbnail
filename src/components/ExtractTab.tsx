@@ -35,8 +35,8 @@ export const ExtractTab = () => {
     
     if (!id) {
       toast({
-        title: "URL inválida",
-        description: "Por favor, insira uma URL válida do YouTube",
+        title: "Invalid URL",
+        description: "Please enter a valid YouTube URL",
         variant: "destructive",
       });
       return;
@@ -46,27 +46,27 @@ export const ExtractTab = () => {
     
     const thumbnailQualities: ThumbnailQuality[] = [
       {
-        label: "Máxima Qualidade",
+        label: "Maximum Quality",
         resolution: "1280x720",
         url: `https://img.youtube.com/vi/${id}/maxresdefault.jpg`,
       },
       {
-        label: "Alta Qualidade",
+        label: "High Quality",
         resolution: "480x360",
         url: `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
       },
       {
-        label: "Qualidade Média",
+        label: "Medium Quality",
         resolution: "320x180",
         url: `https://img.youtube.com/vi/${id}/mqdefault.jpg`,
       },
       {
-        label: "Qualidade Padrão",
+        label: "Standard Quality",
         resolution: "120x90",
         url: `https://img.youtube.com/vi/${id}/default.jpg`,
       },
       {
-        label: "Qualidade Baixa",
+        label: "Low Quality",
         resolution: "120x90",
         url: `https://img.youtube.com/vi/${id}/sddefault.jpg`,
       },
@@ -75,8 +75,8 @@ export const ExtractTab = () => {
     setThumbnails(thumbnailQualities);
     
     toast({
-      title: "Thumbnails encontradas!",
-      description: "Escolha a qualidade e baixe",
+      title: "Thumbnails found!",
+      description: "Choose quality and download",
     });
   };
 
@@ -101,12 +101,12 @@ export const ExtractTab = () => {
     <div className="space-y-8">
       <div className="text-center space-y-4">
         <h2 className="text-3xl md:text-4xl font-bold">
-          Extraia Thumbnails{" "}
-          <span className="text-primary">Direto do YouTube</span>
+          Extract Thumbnails{" "}
+          <span className="text-primary">Directly from YouTube</span>
         </h2>
         <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-          Cole a URL de qualquer vídeo do YouTube e baixe todas as thumbnails disponíveis
-          em diferentes qualidades
+          Paste the URL of any YouTube video and download all available thumbnails
+          in different qualities
         </p>
       </div>
 
@@ -115,27 +115,27 @@ export const ExtractTab = () => {
           <div className="mx-auto w-12 h-12 bg-accent rounded-lg flex items-center justify-center">
             <Link2 className="w-6 h-6 text-accent-foreground" />
           </div>
-          <h3 className="font-semibold">URL Simples</h3>
+          <h3 className="font-semibold">Simple URL</h3>
           <p className="text-sm text-muted-foreground">
-            Cole apenas o link do vídeo
+            Just paste the video link
           </p>
         </div>
         <div className="text-center space-y-2">
           <div className="mx-auto w-12 h-12 bg-accent rounded-lg flex items-center justify-center">
             <Monitor className="w-6 h-6 text-accent-foreground" />
           </div>
-          <h3 className="font-semibold">Múltiplas Qualidades</h3>
+          <h3 className="font-semibold">Multiple Qualities</h3>
           <p className="text-sm text-muted-foreground">
-            Todas as resoluções disponíveis
+            All available resolutions
           </p>
         </div>
         <div className="text-center space-y-2">
           <div className="mx-auto w-12 h-12 bg-accent rounded-lg flex items-center justify-center">
             <DownloadIcon className="w-6 h-6 text-accent-foreground" />
           </div>
-          <h3 className="font-semibold">Download Direto</h3>
+          <h3 className="font-semibold">Direct Download</h3>
           <p className="text-sm text-muted-foreground">
-            Baixe em alta qualidade
+            Download in high quality
           </p>
         </div>
       </div>
@@ -143,14 +143,14 @@ export const ExtractTab = () => {
       <Card className="max-w-2xl mx-auto p-6">
         <div className="flex gap-3">
           <Input
-            placeholder="Cole aqui a URL do vídeo do YouTube..."
+            placeholder="Paste YouTube video URL here..."
             value={videoUrl}
             onChange={(e) => setVideoUrl(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleExtract()}
             className="flex-1"
           />
           <Button onClick={handleExtract} className="px-8">
-            Extrair Thumbnails
+            Extract Thumbnails
           </Button>
         </div>
       </Card>
@@ -159,11 +159,11 @@ export const ExtractTab = () => {
         <div className="space-y-6 max-w-5xl mx-auto">
           <div className="flex justify-between items-center">
             <div>
-              <h3 className="font-semibold text-lg">Thumbnails Encontradas</h3>
-              <p className="text-sm text-muted-foreground">Vídeo ID: {videoId}</p>
+              <h3 className="font-semibold text-lg">Thumbnails Found</h3>
+              <p className="text-sm text-muted-foreground">Video ID: {videoId}</p>
             </div>
             <Button onClick={handleNewSearch} variant="outline">
-              Nova Busca
+              New Search
             </Button>
           </div>
 
@@ -190,7 +190,7 @@ export const ExtractTab = () => {
                       size="sm"
                     >
                       <DownloadIcon className="w-4 h-4" />
-                      Baixar
+                      Download
                     </Button>
                     <Button
                       asChild
@@ -209,36 +209,36 @@ export const ExtractTab = () => {
           </div>
 
           <div className="bg-accent/50 rounded-lg p-4 space-y-2 text-sm">
-            <p className="font-semibold">💡 Dicas:</p>
+            <p className="font-semibold">💡 Tips:</p>
             <ul className="space-y-1 text-muted-foreground">
-              <li>• Clique em "Baixar" para salvar a thumbnail em seu dispositivo</li>
-              <li>• Use o ícone de link externo para abrir a imagem em uma nova aba</li>
-              <li>• Nem todos os vídeos possuem thumbnails em todas as qualidades</li>
+              <li>• Click "Download" to save the thumbnail to your device</li>
+              <li>• Use the external link icon to open the image in a new tab</li>
+              <li>• Not all videos have thumbnails in all qualities</li>
             </ul>
           </div>
         </div>
       )}
 
       <div className="max-w-2xl mx-auto">
-        <h3 className="font-semibold text-center mb-6">Como usar:</h3>
+        <h3 className="font-semibold text-center mb-6">How to use:</h3>
         <div className="flex flex-wrap justify-center gap-8">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold flex-shrink-0">
               1
             </div>
-            <p className="text-sm">Cole a URL do vídeo</p>
+            <p className="text-sm">Paste video URL</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold flex-shrink-0">
               2
             </div>
-            <p className="text-sm">Veja as thumbnails</p>
+            <p className="text-sm">View thumbnails</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold flex-shrink-0">
               3
             </div>
-            <p className="text-sm">Baixe a que preferir</p>
+            <p className="text-sm">Download your favorite</p>
           </div>
         </div>
       </div>
