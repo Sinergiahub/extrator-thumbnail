@@ -111,36 +111,36 @@ export const ExtractTab = () => {
       </div>
 
       <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        <div className="text-center space-y-2">
-          <div className="mx-auto w-12 h-12 bg-accent rounded-lg flex items-center justify-center">
-            <Link2 className="w-6 h-6 text-accent-foreground" />
+        <Card className="p-6 text-center transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
+          <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
+            <Link2 className="w-6 h-6 text-primary" />
           </div>
-          <h3 className="font-semibold">Simple URL</h3>
+          <h3 className="font-semibold mb-2">Simple URL</h3>
           <p className="text-sm text-muted-foreground">
             Just paste the video link
           </p>
-        </div>
-        <div className="text-center space-y-2">
-          <div className="mx-auto w-12 h-12 bg-accent rounded-lg flex items-center justify-center">
-            <Monitor className="w-6 h-6 text-accent-foreground" />
+        </Card>
+        <Card className="p-6 text-center transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
+          <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
+            <Monitor className="w-6 h-6 text-primary" />
           </div>
-          <h3 className="font-semibold">Multiple Qualities</h3>
+          <h3 className="font-semibold mb-2">Multiple Qualities</h3>
           <p className="text-sm text-muted-foreground">
             All available resolutions
           </p>
-        </div>
-        <div className="text-center space-y-2">
-          <div className="mx-auto w-12 h-12 bg-accent rounded-lg flex items-center justify-center">
-            <DownloadIcon className="w-6 h-6 text-accent-foreground" />
+        </Card>
+        <Card className="p-6 text-center transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
+          <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
+            <DownloadIcon className="w-6 h-6 text-primary" />
           </div>
-          <h3 className="font-semibold">Direct Download</h3>
+          <h3 className="font-semibold mb-2">Direct Download</h3>
           <p className="text-sm text-muted-foreground">
             Download in high quality
           </p>
-        </div>
+        </Card>
       </div>
 
-      <Card className="max-w-2xl mx-auto p-6">
+      <Card className="max-w-2xl mx-auto p-6 transition-all duration-300 hover:border-primary hover:border-2 hover:shadow-xl hover:shadow-primary/20">
         <div className="flex gap-3">
           <Input
             placeholder="Paste YouTube video URL here..."
@@ -169,7 +169,7 @@ export const ExtractTab = () => {
 
           <div className="grid md:grid-cols-3 gap-6">
             {thumbnails.map((thumb, index) => (
-              <Card key={index} className="overflow-hidden">
+              <Card key={index} className="overflow-hidden transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
                 <div className="aspect-video bg-muted">
                   <img
                     src={thumb.url}
@@ -186,7 +186,7 @@ export const ExtractTab = () => {
                   <div className="flex gap-2">
                     <Button
                       onClick={() => handleDownload(thumb.url, thumb.label)}
-                      className="flex-1 gap-2"
+                      className="flex-1 gap-2 transition-transform duration-300 hover:scale-105"
                       size="sm"
                     >
                       <DownloadIcon className="w-4 h-4" />
