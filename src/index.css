@@ -1,0 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+
+    --primary: 0 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 10%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 0 0% 95%;
+    --accent-foreground: 0 100% 50%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 100% 50%;
+
+    --radius: 0.5rem;
+
+    --youtube-red: 0 100% 50%;
+    --youtube-hover: 0 100% 45%;
+  }
+
+  html[data-theme="dark"] {
+    --background: 222 47% 11%;
+    --foreground: 0 0% 90%;
+
+    --card: 222 47% 7%;
+    --card-foreground: 0 0% 90%;
+
+    --popover: 222 47% 7%;
+    --popover-foreground: 0 0% 90%;
+
+    --primary: 0 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 0 0% 90%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 0 0% 62%;
+
+    --accent: 217 33% 17%;
+    --accent-foreground: 0 100% 50%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 0 100% 50%;
+
+    --youtube-red: 0 100% 50%;
+    --youtube-hover: 0 100% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* ----- Uploader Card ----- */
+.uploader {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.25rem;
+  border: 1px dashed hsl(var(--border));
+  border-radius: .75rem;
+  background: hsl(var(--card));
+}
+
+/* Área de ações (hint + botão) com espaçamento consistente */
+.upload-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .75rem;
+  margin-top: .75rem;
+}
+
+/* Linha de formatos com ícone 📎 */
+.upload-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  color: hsl(var(--muted-foreground));
+  font-size: .95rem;
+}
+
+.upload-hint .hint-icon {
+  line-height: 1;
+  font-size: 1rem;
+  transform: translateY(1px);
+}
+
+/* Botão primário do uploader */
+.btn-upload {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: 1px solid hsl(var(--primary));
+  padding: .625rem 1rem;
+  border-radius: .5rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  transition: all 0.2s;
+}
+
+.btn-upload:hover {
+  background: hsl(var(--youtube-hover));
+  border-color: hsl(var(--youtube-hover));
+}
+
+/* ----- Responsividade ----- */
+@media (max-width: 640px) {
+  .uploader { 
+    padding: 1rem; 
+  }
+
+  .btn-upload {
+    width: 100%;
+  }
+
+  .upload-hint {
+    font-size: .9rem;
+    text-align: center;
+    flex-wrap: wrap;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .uploader { 
+    max-width: 860px; 
+  }
+}
