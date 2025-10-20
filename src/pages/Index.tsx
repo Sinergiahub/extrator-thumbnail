@@ -99,7 +99,11 @@ const Index = () => {
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
+            <button 
+              onClick={handleNewImage}
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+              aria-label="Back to home"
+            >
               <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                 <svg
                   viewBox="0 0 24 24"
@@ -110,7 +114,7 @@ const Index = () => {
                 </svg>
               </div>
               <h1 className="text-lg md:text-xl font-bold">YouTube Thumbnail Tools</h1>
-            </div>
+            </button>
             <ThemeToggle />
           </div>
         </div>
