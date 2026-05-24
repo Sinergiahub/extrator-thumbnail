@@ -206,7 +206,42 @@ export const ResizeTab = () => {
 
   return (
     <div className="space-y-8">
-      {!originalImage && batchItems.length === 0 ? (
+      {batchItems.length > 0 ? (
+        <div className="max-w-5xl mx-auto space-y-6">
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl md:text-3xl font-bold">
+              {batchItems.length} images resized
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              {SIZE_PRESETS[selectedSize].label}
+            </p>
+          </div>
+
+          <div className="flex gap-3 justify-center flex-wrap">
+            <Button onClick={handleDownloadZip} size="lg" className="gap-2 transition-transform duration-300 hover:scale-105">
+              <DownloadIcon className="w-4 h-4" />
+              Download ZIP ({batchItems.length})
+            </Button>
+            <Button onClick={handleNewImage} variant="outline" size="lg" className="gap-2 transition-transform duration-300 hover:scale-105">
+              🔄 New Batch
+            </Button>
+          </div>
+
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {batchItems.map((item, idx) => (
+              <Card key={idx} className="p-3 space-y-2 transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
+                <div
+                  className="bg-muted rounded-lg overflow-hidden flex items-center justify-center"
+                  style={{ aspectRatio: `${SIZE_PRESETS[selectedSize].width} / ${SIZE_PRESETS[selectedSize].height}` }}
+                >
+                  <img src={item.resized} alt={item.name} className="w-full h-full object-contain" />
+                </div>
+                <p className="text-xs text-muted-foreground truncate text-center">{item.name}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      ) : !originalImage ? (
         <>
           <div className="text-center space-y-4">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
