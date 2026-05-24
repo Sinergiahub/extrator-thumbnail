@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Upload, Zap, Monitor, Download as DownloadIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import JSZip from "jszip";
 
 type SizePreset = {
   label: string;
@@ -30,12 +31,23 @@ export const ResizeTab = () => {
     originalSize: number;
     aspectRatio: string;
   } | null>(null);
+  const [batchItems, setBatchItems] = useState<
+    { name: string; original: string; resized: string }[]
+  >([]);
+  const [isProcessing, setIsProcessing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
+
+    if (files.length > 1) {
+      void handleBatchUpload(files);
+      return;
+    }
+
+    const file = files[0];
 
     if (file.size > 10 * 1024 * 1024) {
       toast({
@@ -90,6 +102,88 @@ export const ResizeTab = () => {
     reader.readAsDataURL(file);
   };
 
+  const resizeFile = (file: File): Promise<{ name: string; original: string; resized: string }> => {
+    return new Promise((resolve, reject) => {
+      const preset = SIZE_PRESETS[selectedSize];
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const dataUrl = event.target?.result as string;
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          canvas.width = preset.width;
+          canvas.height = preset.height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return reject(new Error("Canvas error"));
+          ctx.fillStyle = "#000";
+          ctx.fillRect(0, 0, preset.width, preset.height);
+          const scale = Math.max(preset.width / img.width, preset.height / img.height);
+          const x = (preset.width - img.width * scale) / 2;
+          const y = (preset.height - img.height * scale) / 2;
+          ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+          resolve({
+            name: file.name.replace(/\.[^.]+$/, ""),
+            original: dataUrl,
+            resized: canvas.toDataURL("image/jpeg", 0.9),
+          });
+        };
+        img.onerror = () => reject(new Error("Image load error"));
+        img.src = dataUrl;
+      };
+      reader.onerror = () => reject(new Error("File read error"));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleBatchUpload = async (files: File[]) => {
+    const valid = files.filter((f) => f.size <= 10 * 1024 * 1024);
+    if (valid.length < files.length) {
+      toast({
+        title: "Some files skipped",
+        description: "Files larger than 10MB were ignored.",
+        variant: "destructive",
+      });
+    }
+    if (valid.length === 0) return;
+
+    setIsProcessing(true);
+    try {
+      const results = await Promise.all(valid.map(resizeFile));
+      setBatchItems(results);
+      setOriginalImage(null);
+      setResizedImage(null);
+      toast({
+        title: "Batch processed!",
+        description: `${results.length} images resized to ${SIZE_PRESETS[selectedSize].width}×${SIZE_PRESETS[selectedSize].height}px`,
+      });
+    } catch (err) {
+      toast({
+        title: "Processing failed",
+        description: (err as Error).message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleDownloadZip = async () => {
+    if (batchItems.length === 0) return;
+    const preset = SIZE_PRESETS[selectedSize];
+    const zip = new JSZip();
+    batchItems.forEach((item) => {
+      const base64 = item.resized.split(",")[1];
+      zip.file(`${item.name}-${preset.width}x${preset.height}.jpg`, base64, { base64: true });
+    });
+    const blob = await zip.generateAsync({ type: "blob" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = `resized-${preset.width}x${preset.height}.zip`;
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   const handleDownload = () => {
     if (!resizedImage) return;
     const preset = SIZE_PRESETS[selectedSize];
@@ -104,6 +198,7 @@ export const ResizeTab = () => {
     setResizedImage(null);
     setOriginalDimensions(null);
     setImageInfo(null);
+    setBatchItems([]);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -111,7 +206,7 @@ export const ResizeTab = () => {
 
   return (
     <div className="space-y-8">
-      {!originalImage ? (
+      {!originalImage && batchItems.length === 0 ? (
         <>
           <div className="text-center space-y-4">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
