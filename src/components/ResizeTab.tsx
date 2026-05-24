@@ -14,6 +14,7 @@ type SizePreset = {
 const SIZE_PRESETS: Record<string, SizePreset> = {
   "youtube": { label: "YouTube Thumbnail (1280×720)", width: 1280, height: 720, aspectRatio: "16:9" },
   "portrait": { label: "Portrait / Story (730×1024)", width: 730, height: 1024, aspectRatio: "730:1024" },
+  "banner": { label: "Banner (2000×590)", width: 2000, height: 590, aspectRatio: "2000:590" },
 };
 
 export const ResizeTab = () => {
