@@ -14,6 +14,7 @@ type SizePreset = {
 const SIZE_PRESETS: Record<string, SizePreset> = {
   "youtube": { label: "YouTube Thumbnail (1280×720)", width: 1280, height: 720, aspectRatio: "16:9" },
   "portrait": { label: "Portrait / Story (730×1024)", width: 730, height: 1024, aspectRatio: "730:1024" },
+  "banner": { label: "Banner (2000×590)", width: 2000, height: 590, aspectRatio: "2000:590" },
 };
 
 export const ResizeTab = () => {
@@ -117,7 +118,7 @@ export const ResizeTab = () => {
               Resize Images for <span className="text-primary">YouTube Thumbnails</span>
             </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-              Convert any image to the perfect size for YouTube thumbnails (1280×720) or portrait/story format (730×1024)
+              Convert any image to the perfect size for YouTube thumbnails (1280×720), portrait/story format (730×1024), or banner (2000×590)
             </p>
           </div>
 
@@ -156,7 +157,7 @@ export const ResizeTab = () => {
           <Card className="max-w-2xl mx-auto p-12 transition-all duration-300 hover:border-primary hover:border-2 hover:shadow-xl hover:shadow-primary/20">
             <div className="mb-6">
               <p className="text-sm font-semibold mb-3 text-center">Choose output size:</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {(Object.keys(SIZE_PRESETS) as Array<keyof typeof SIZE_PRESETS>).map((key) => {
                   const preset = SIZE_PRESETS[key];
                   const isActive = selectedSize === key;
