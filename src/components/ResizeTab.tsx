@@ -4,7 +4,20 @@ import { Card } from "@/components/ui/card";
 import { Upload, Zap, Monitor, Download as DownloadIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+type SizePreset = {
+  label: string;
+  width: number;
+  height: number;
+  aspectRatio: string;
+};
+
+const SIZE_PRESETS: Record<string, SizePreset> = {
+  "youtube": { label: "YouTube Thumbnail (1280×720)", width: 1280, height: 720, aspectRatio: "16:9" },
+  "portrait": { label: "Portrait / Story (730×1024)", width: 730, height: 1024, aspectRatio: "730:1024" },
+};
+
 export const ResizeTab = () => {
+  const [selectedSize, setSelectedSize] = useState<keyof typeof SIZE_PRESETS>("youtube");
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [resizedImage, setResizedImage] = useState<string | null>(null);
   const [originalDimensions, setOriginalDimensions] = useState<{
@@ -32,6 +45,8 @@ export const ResizeTab = () => {
       return;
     }
 
+    const preset = SIZE_PRESETS[selectedSize];
+
     const reader = new FileReader();
     reader.onload = (event) => {
       const img = new Image();
@@ -40,17 +55,17 @@ export const ResizeTab = () => {
         setOriginalDimensions({ width: img.width, height: img.height });
         
         const canvas = document.createElement("canvas");
-        canvas.width = 1280;
-        canvas.height = 720;
+        canvas.width = preset.width;
+        canvas.height = preset.height;
         const ctx = canvas.getContext("2d");
         
         if (ctx) {
           ctx.fillStyle = "#000";
-          ctx.fillRect(0, 0, 1280, 720);
+          ctx.fillRect(0, 0, preset.width, preset.height);
           
-          const scale = Math.max(1280 / img.width, 720 / img.height);
-          const x = (1280 - img.width * scale) / 2;
-          const y = (720 - img.height * scale) / 2;
+          const scale = Math.max(preset.width / img.width, preset.height / img.height);
+          const x = (preset.width - img.width * scale) / 2;
+          const y = (preset.height - img.height * scale) / 2;
           
           ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
           
@@ -60,12 +75,12 @@ export const ResizeTab = () => {
           setImageInfo({
             format: `JPG (90%)`,
             originalSize: file.size / 1024,
-            aspectRatio: "16:9",
+            aspectRatio: preset.aspectRatio,
           });
           
           toast({
             title: "Image processed!",
-            description: "Your thumbnail is ready for download",
+            description: `Resized to ${preset.width}×${preset.height}px`,
           });
         }
       };
@@ -76,9 +91,9 @@ export const ResizeTab = () => {
 
   const handleDownload = () => {
     if (!resizedImage) return;
-    
+    const preset = SIZE_PRESETS[selectedSize];
     const link = document.createElement("a");
-    link.download = "youtube-thumbnail.jpg";
+    link.download = `image-${preset.width}x${preset.height}.jpg`;
     link.href = resizedImage;
     link.click();
   };
@@ -102,7 +117,7 @@ export const ResizeTab = () => {
               Resize Images for <span className="text-primary">YouTube Thumbnails</span>
             </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-              Convert any image to the perfect 1280×720 pixel size for professional YouTube thumbnails
+              Convert any image to the perfect size for YouTube thumbnails (1280×720) or portrait/story format (730×1024)
             </p>
           </div>
 
@@ -139,6 +154,29 @@ export const ResizeTab = () => {
           </div>
 
           <Card className="max-w-2xl mx-auto p-12 transition-all duration-300 hover:border-primary hover:border-2 hover:shadow-xl hover:shadow-primary/20">
+            <div className="mb-6">
+              <p className="text-sm font-semibold mb-3 text-center">Choose output size:</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {(Object.keys(SIZE_PRESETS) as Array<keyof typeof SIZE_PRESETS>).map((key) => {
+                  const preset = SIZE_PRESETS[key];
+                  const isActive = selectedSize === key;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setSelectedSize(key)}
+                      className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-300 hover:scale-105 ${
+                        isActive
+                          ? "border-primary bg-primary/10 text-foreground"
+                          : "border-border hover:border-primary"
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
             <input
               ref={fileInputRef}
               type="file"
@@ -213,10 +251,12 @@ export const ResizeTab = () => {
             </Card>
             <Card className="p-4 space-y-2 transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
               <div className="flex justify-between items-center">
-                <h3 className="font-semibold">YouTube Thumbnail</h3>
-                <span className="text-xs text-muted-foreground">1280 × 720</span>
+                <h3 className="font-semibold">Resized Image</h3>
+                <span className="text-xs text-muted-foreground">
+                  {SIZE_PRESETS[selectedSize].width} × {SIZE_PRESETS[selectedSize].height}
+                </span>
               </div>
-              <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+              <div className="bg-muted rounded-lg overflow-hidden flex items-center justify-center" style={{ aspectRatio: `${SIZE_PRESETS[selectedSize].width} / ${SIZE_PRESETS[selectedSize].height}` }}>
                 <img
                   src={resizedImage || ""}
                   alt="Resized"
@@ -246,7 +286,7 @@ export const ResizeTab = () => {
           <div className="flex gap-3 justify-center flex-wrap">
             <Button onClick={handleDownload} size="lg" className="gap-2 transition-transform duration-300 hover:scale-105">
               <DownloadIcon className="w-4 h-4" />
-              Download Thumbnail
+              Download Image
             </Button>
             <Button onClick={handleNewImage} variant="outline" size="lg" className="gap-2 transition-transform duration-300 hover:scale-105">
               🔄 New Image
