@@ -277,6 +277,7 @@ export const ResizeTab = () => {
               ref={fileInputRef}
               type="file"
               accept="image/*"
+              multiple
               onChange={handleImageUpload}
               className="hidden"
               id="image-upload"
@@ -289,15 +290,15 @@ export const ResizeTab = () => {
                 <Upload className="w-8 h-8 text-muted-foreground" />
               </div>
               <div className="text-center space-y-3">
-                <p className="font-semibold text-lg">Upload your image</p>
+                <p className="font-semibold text-lg">Upload your image(s)</p>
                 <p className="text-sm text-muted-foreground">
-                  Drag and drop or click to select
+                  Drag and drop or click to select — select multiple to get a ZIP
                 </p>
                 <p className="text-xs text-muted-foreground">
                   JPG, PNG, WEBP up to 10MB
                 </p>
-                <Button type="button" className="mt-2 transition-transform duration-300 hover:scale-105">
-                  Select Image
+                <Button type="button" className="mt-2 transition-transform duration-300 hover:scale-105" disabled={isProcessing}>
+                  {isProcessing ? "Processing..." : "Select Image(s)"}
                 </Button>
               </div>
             </label>
