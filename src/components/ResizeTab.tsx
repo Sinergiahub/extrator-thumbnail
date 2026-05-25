@@ -253,7 +253,7 @@ export const ResizeTab = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
             <Card className="p-6 text-center transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110">
                 <Zap className="w-6 h-6 text-primary" />
@@ -268,9 +268,9 @@ export const ResizeTab = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110">
                 <Monitor className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-semibold mb-2">Perfect Size</h3>
+              <h3 className="font-semibold mb-2">4 Presets</h3>
               <p className="text-sm text-muted-foreground">
-                Always 1280×720px, ideal for YouTube
+                YouTube, Reels, Portrait & Banner
               </p>
             </Card>
 
@@ -281,6 +281,16 @@ export const ResizeTab = () => {
               <h3 className="font-semibold mb-2">Direct Download</h3>
               <p className="text-sm text-muted-foreground">
                 Download in JPG with 90% quality
+              </p>
+            </Card>
+
+            <Card className="p-6 text-center transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110">
+                <Upload className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="font-semibold mb-2">Batch ZIP</h3>
+              <p className="text-sm text-muted-foreground">
+                Upload multiple & download as ZIP
               </p>
             </Card>
           </div>
