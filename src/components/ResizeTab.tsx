@@ -14,6 +14,7 @@ type SizePreset = {
 
 const SIZE_PRESETS: Record<string, SizePreset> = {
   "youtube": { label: "YouTube Thumbnail (1280×720)", width: 1280, height: 720, aspectRatio: "16:9" },
+  "reels": { label: "Reels / Shorts (1080×1920)", width: 1080, height: 1920, aspectRatio: "9:16" },
   "portrait": { label: "Portrait / Story (730×1024)", width: 730, height: 1024, aspectRatio: "730:1024" },
   "banner": { label: "Banner (2000×590)", width: 2000, height: 590, aspectRatio: "2000:590" },
 };
@@ -245,14 +246,14 @@ export const ResizeTab = () => {
         <>
           <div className="text-center space-y-4">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
-              Resize Images for <span className="text-primary">YouTube Thumbnails</span>
+              Resize Images for <span className="text-primary">Social Media</span>
             </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-              Convert any image to the perfect size for YouTube thumbnails (1280×720), portrait/story format (730×1024), or banner (2000×590)
+              Convert any image to the perfect size for YouTube thumbnails (1280×720), Reels/Shorts (1080×1920), portrait/story (730×1024), or banner (2000×590)
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
             <Card className="p-6 text-center transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110">
                 <Zap className="w-6 h-6 text-primary" />
@@ -267,9 +268,9 @@ export const ResizeTab = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110">
                 <Monitor className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-semibold mb-2">Perfect Size</h3>
+              <h3 className="font-semibold mb-2">4 Presets</h3>
               <p className="text-sm text-muted-foreground">
-                Always 1280×720px, ideal for YouTube
+                YouTube, Reels, Portrait & Banner
               </p>
             </Card>
 
@@ -282,12 +283,22 @@ export const ResizeTab = () => {
                 Download in JPG with 90% quality
               </p>
             </Card>
+
+            <Card className="p-6 text-center transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110">
+                <Upload className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="font-semibold mb-2">Batch ZIP</h3>
+              <p className="text-sm text-muted-foreground">
+                Upload multiple & download as ZIP
+              </p>
+            </Card>
           </div>
 
           <Card className="max-w-2xl mx-auto p-12 transition-all duration-300 hover:border-primary hover:border-2 hover:shadow-xl hover:shadow-primary/20">
             <div className="mb-6">
               <p className="text-sm font-semibold mb-3 text-center">Choose output size:</p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {(Object.keys(SIZE_PRESETS) as Array<keyof typeof SIZE_PRESETS>).map((key) => {
                   const preset = SIZE_PRESETS[key];
                   const isActive = selectedSize === key;
