@@ -246,10 +246,10 @@ export const ResizeTab = () => {
         <>
           <div className="text-center space-y-4">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
-              Resize Images for <span className="text-primary">YouTube Thumbnails</span>
+              Resize Images for <span className="text-primary">Social Media</span>
             </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-              Convert any image to the perfect size for YouTube thumbnails (1280×720), portrait/story format (730×1024), or banner (2000×590)
+              Convert any image to the perfect size for YouTube thumbnails (1280×720), Reels/Shorts (1080×1920), portrait/story (730×1024), or banner (2000×590)
             </p>
           </div>
 
