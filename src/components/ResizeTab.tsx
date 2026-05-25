@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Upload, Zap, Monitor, Download as DownloadIcon } from "lucide-react";
+import { Upload, Zap, Monitor, Download as DownloadIcon, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import JSZip from "jszip";
 
@@ -376,6 +376,12 @@ export const ResizeTab = () => {
         </>
       ) : (
         <div className="max-w-4xl mx-auto space-y-6">
+          <div className="flex justify-start">
+            <Button onClick={handleNewImage} variant="outline" size="sm" className="gap-2 transition-transform duration-300 hover:scale-105">
+              <ArrowLeft className="w-4 h-4" />
+              Back to menu
+            </Button>
+          </div>
           <div className="grid md:grid-cols-2 gap-6">
             <Card className="p-4 space-y-2 transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
               <div className="flex justify-between items-center">
