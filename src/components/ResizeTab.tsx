@@ -298,7 +298,7 @@ export const ResizeTab = () => {
           <Card className="max-w-2xl mx-auto p-12 transition-all duration-300 hover:border-primary hover:border-2 hover:shadow-xl hover:shadow-primary/20">
             <div className="mb-6">
               <p className="text-sm font-semibold mb-3 text-center">Choose output size:</p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {(Object.keys(SIZE_PRESETS) as Array<keyof typeof SIZE_PRESETS>).map((key) => {
                   const preset = SIZE_PRESETS[key];
                   const isActive = selectedSize === key;
