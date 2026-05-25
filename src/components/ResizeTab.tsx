@@ -13,11 +13,11 @@ type SizePreset = {
 };
 
 const SIZE_PRESETS: Record<string, SizePreset> = {
-  "youtube": { label: "YouTube Thumbnail (1280×720)", width: 1280, height: 720, aspectRatio: "16:9" },
+  "youtube": { label: "Thumbnail do YouTube (1280×720)", width: 1280, height: 720, aspectRatio: "16:9" },
   "reels": { label: "Reels / Shorts (1080×1920)", width: 1080, height: 1920, aspectRatio: "9:16" },
-  "instagram": { label: "Instagram Post (1080×1080)", width: 1080, height: 1080, aspectRatio: "1:1" },
-  "portrait": { label: "Portrait / Story (730×1024)", width: 730, height: 1024, aspectRatio: "730:1024" },
-  "a4": { label: "A4 Portrait (720×1024)", width: 720, height: 1024, aspectRatio: "720:1024" },
+  "instagram": { label: "Post do Instagram (1080×1080)", width: 1080, height: 1080, aspectRatio: "1:1" },
+  "portrait": { label: "Retrato / Story (730×1024)", width: 730, height: 1024, aspectRatio: "730:1024" },
+  "a4": { label: "A4 Retrato (720×1024)", width: 720, height: 1024, aspectRatio: "720:1024" },
   "vertical": { label: "Vertical (720×1280)", width: 720, height: 1280, aspectRatio: "9:16" },
   "banner": { label: "Banner (2000×590)", width: 2000, height: 590, aspectRatio: "2000:590" },
 };
@@ -55,8 +55,8 @@ export const ResizeTab = () => {
 
     if (file.size > 10 * 1024 * 1024) {
       toast({
-        title: "File too large",
-        description: "Maximum size is 10MB",
+        title: "Arquivo muito grande",
+        description: "O tamanho máximo é 10MB",
         variant: "destructive",
       });
       return;
@@ -96,8 +96,8 @@ export const ResizeTab = () => {
           });
           
           toast({
-            title: "Image processed!",
-            description: `Resized to ${preset.width}×${preset.height}px`,
+            title: "Imagem processada!",
+            description: `Redimensionada para ${preset.width}×${preset.height}px`,
           });
         }
       };
@@ -143,8 +143,8 @@ export const ResizeTab = () => {
     const valid = files.filter((f) => f.size <= 10 * 1024 * 1024);
     if (valid.length < files.length) {
       toast({
-        title: "Some files skipped",
-        description: "Files larger than 10MB were ignored.",
+        title: "Alguns arquivos ignorados",
+        description: "Arquivos maiores que 10MB foram ignorados.",
         variant: "destructive",
       });
     }
@@ -157,12 +157,12 @@ export const ResizeTab = () => {
       setOriginalImage(null);
       setResizedImage(null);
       toast({
-        title: "Batch processed!",
-        description: `${results.length} images resized to ${SIZE_PRESETS[selectedSize].width}×${SIZE_PRESETS[selectedSize].height}px`,
+        title: "Lote processado!",
+        description: `${results.length} imagens redimensionadas para ${SIZE_PRESETS[selectedSize].width}×${SIZE_PRESETS[selectedSize].height}px`,
       });
     } catch (err) {
       toast({
-        title: "Processing failed",
+        title: "Falha no processamento",
         description: (err as Error).message,
         variant: "destructive",
       });
@@ -215,12 +215,12 @@ export const ResizeTab = () => {
           <div className="flex justify-start">
             <Button onClick={handleNewImage} variant="outline" size="sm" className="gap-2 transition-transform duration-300 hover:scale-105">
               <ArrowLeft className="w-4 h-4" />
-              Back to menu
+              Voltar ao menu
             </Button>
           </div>
           <div className="text-center space-y-2">
             <h2 className="text-2xl md:text-3xl font-bold">
-              {batchItems.length} images resized
+              {batchItems.length} imagens redimensionadas
             </h2>
             <p className="text-muted-foreground text-sm">
               {SIZE_PRESETS[selectedSize].label}
@@ -230,10 +230,10 @@ export const ResizeTab = () => {
           <div className="flex gap-3 justify-center flex-wrap">
             <Button onClick={handleDownloadZip} size="lg" className="gap-2 transition-transform duration-300 hover:scale-105">
               <DownloadIcon className="w-4 h-4" />
-              Download ZIP ({batchItems.length})
+              Baixar ZIP ({batchItems.length})
             </Button>
             <Button onClick={handleNewImage} variant="outline" size="lg" className="gap-2 transition-transform duration-300 hover:scale-105">
-              🔄 New Batch
+              🔄 Novo Lote
             </Button>
           </div>
 
@@ -255,10 +255,10 @@ export const ResizeTab = () => {
         <>
           <div className="text-center space-y-4">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
-              Resize Images for <span className="text-primary">Social Media</span>
+              Redimensione Imagens para <span className="text-primary">Redes Sociais</span>
             </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-              Convert any image to the perfect size for YouTube thumbnails, Reels/Shorts, Instagram posts, portraits, A4, vertical, or banner formats
+              Converta qualquer imagem para o tamanho perfeito para thumbnails do YouTube, Reels/Shorts, posts do Instagram, retratos, A4, vertical ou banners
             </p>
           </div>
 
@@ -267,9 +267,9 @@ export const ResizeTab = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110">
                 <Zap className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-semibold mb-2">Fast Processing</h3>
+              <h3 className="font-semibold mb-2">Processamento Rápido</h3>
               <p className="text-sm text-muted-foreground">
-                Instant resizing with high quality
+                Redimensionamento instantâneo com alta qualidade
               </p>
             </Card>
 
@@ -279,7 +279,7 @@ export const ResizeTab = () => {
               </div>
               <h3 className="font-semibold mb-2">7 Presets</h3>
               <p className="text-sm text-muted-foreground">
-                YouTube, Reels, Instagram, Portrait, A4, Vertical & Banner
+                YouTube, Reels, Instagram, Retrato, A4, Vertical e Banner
               </p>
             </Card>
 
@@ -287,9 +287,9 @@ export const ResizeTab = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110">
                 <DownloadIcon className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-semibold mb-2">Direct Download</h3>
+              <h3 className="font-semibold mb-2">Download Direto</h3>
               <p className="text-sm text-muted-foreground">
-                Download in JPG with 90% quality
+                Baixe em JPG com 90% de qualidade
               </p>
             </Card>
 
@@ -297,16 +297,16 @@ export const ResizeTab = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110">
                 <Upload className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-semibold mb-2">Batch ZIP</h3>
+              <h3 className="font-semibold mb-2">Lote em ZIP</h3>
               <p className="text-sm text-muted-foreground">
-                Upload multiple & download as ZIP
+                Envie várias imagens e baixe como ZIP
               </p>
             </Card>
           </div>
 
           <Card className="max-w-2xl mx-auto p-12 transition-all duration-300 hover:border-primary hover:border-2 hover:shadow-xl hover:shadow-primary/20">
             <div className="mb-6">
-              <p className="text-sm font-semibold mb-3 text-center">Choose output size:</p>
+              <p className="text-sm font-semibold mb-3 text-center">Escolha o tamanho de saída:</p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {(Object.keys(SIZE_PRESETS) as Array<keyof typeof SIZE_PRESETS>).map((key) => {
                   const preset = SIZE_PRESETS[key];
@@ -345,40 +345,40 @@ export const ResizeTab = () => {
                 <Upload className="w-8 h-8 text-muted-foreground" />
               </div>
               <div className="text-center space-y-3">
-                <p className="font-semibold text-lg">Upload your image(s)</p>
+                <p className="font-semibold text-lg">Envie sua(s) imagem(ns)</p>
                 <p className="text-sm text-muted-foreground">
-                  Drag and drop or click to select — select multiple to get a ZIP
+                  Arraste e solte ou clique para selecionar — selecione várias para receber um ZIP
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  JPG, PNG, WEBP up to 10MB
+                  JPG, PNG, WEBP até 10MB
                 </p>
                 <Button type="button" className="mt-2 transition-transform duration-300 hover:scale-105" disabled={isProcessing}>
-                  {isProcessing ? "Processing..." : "Select Image(s)"}
+                  {isProcessing ? "Processando..." : "Selecionar Imagem(ns)"}
                 </Button>
               </div>
             </label>
           </Card>
 
           <div className="max-w-4xl mx-auto">
-            <h3 className="text-center font-semibold text-lg mb-8">How to use:</h3>
+            <h3 className="text-center font-semibold text-lg mb-8">Como usar:</h3>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="text-center">
                 <div className="w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-3 font-bold">
                   1
                 </div>
-                <p className="text-sm">Upload image</p>
+                <p className="text-sm">Envie a imagem</p>
               </div>
               <div className="text-center">
                 <div className="w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-3 font-bold">
                   2
                 </div>
-                <p className="text-sm">See automatic result</p>
+                <p className="text-sm">Veja o resultado automático</p>
               </div>
               <div className="text-center">
                 <div className="w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-3 font-bold">
                   3
                 </div>
-                <p className="text-sm">Download your thumbnail</p>
+                <p className="text-sm">Baixe sua thumbnail</p>
               </div>
             </div>
           </div>
@@ -388,13 +388,13 @@ export const ResizeTab = () => {
           <div className="flex justify-start">
             <Button onClick={handleNewImage} variant="outline" size="sm" className="gap-2 transition-transform duration-300 hover:scale-105">
               <ArrowLeft className="w-4 h-4" />
-              Back to menu
+              Voltar ao menu
             </Button>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
             <Card className="p-4 space-y-2 transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
               <div className="flex justify-between items-center">
-                <h3 className="font-semibold">Original Image</h3>
+                <h3 className="font-semibold">Imagem Original</h3>
                 <span className="text-xs text-muted-foreground">
                   {originalDimensions ? `${originalDimensions.width} × ${originalDimensions.height}` : '1280 × 720'}
                 </span>
@@ -409,7 +409,7 @@ export const ResizeTab = () => {
             </Card>
             <Card className="p-4 space-y-2 transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
               <div className="flex justify-between items-center">
-                <h3 className="font-semibold">Resized Image</h3>
+                <h3 className="font-semibold">Imagem Redimensionada</h3>
                 <span className="text-xs text-muted-foreground">
                   {SIZE_PRESETS[selectedSize].width} × {SIZE_PRESETS[selectedSize].height}
                 </span>
@@ -427,15 +427,15 @@ export const ResizeTab = () => {
           {imageInfo && (
             <div className="grid grid-cols-3 gap-4">
               <Card className="p-4 text-center transition-all duration-300 hover:scale-105 hover:border-primary hover:shadow-lg hover:shadow-primary/20">
-                <p className="text-xs text-muted-foreground mb-1">📎 Format</p>
+                <p className="text-xs text-muted-foreground mb-1">📎 Formato</p>
                 <p className="font-semibold">{imageInfo.format}</p>
               </Card>
               <Card className="p-4 text-center transition-all duration-300 hover:scale-105 hover:border-primary hover:shadow-lg hover:shadow-primary/20">
-                <p className="text-xs text-muted-foreground mb-1">📊 Size</p>
+                <p className="text-xs text-muted-foreground mb-1">📊 Tamanho</p>
                 <p className="font-semibold">{imageInfo.originalSize.toFixed(2)} KB</p>
               </Card>
               <Card className="p-4 text-center transition-all duration-300 hover:scale-105 hover:border-primary hover:shadow-lg hover:shadow-primary/20">
-                <p className="text-xs text-muted-foreground mb-1">📐 Aspect Ratio</p>
+                <p className="text-xs text-muted-foreground mb-1">📐 Proporção</p>
                 <p className="font-semibold">{imageInfo.aspectRatio}</p>
               </Card>
             </div>
@@ -444,33 +444,33 @@ export const ResizeTab = () => {
           <div className="flex gap-3 justify-center flex-wrap">
             <Button onClick={handleDownload} size="lg" className="gap-2 transition-transform duration-300 hover:scale-105">
               <DownloadIcon className="w-4 h-4" />
-              Download Image
+              Baixar Imagem
             </Button>
             <Button onClick={handleNewImage} variant="outline" size="lg" className="gap-2 transition-transform duration-300 hover:scale-105">
-              🔄 New Image
+              🔄 Nova Imagem
             </Button>
           </div>
 
           <Card className="p-6 mt-8 border-2 border-primary/50 transition-all duration-300 hover:border-primary hover:shadow-lg hover:shadow-primary/20">
-            <h3 className="text-center font-semibold text-lg mb-6">How to use:</h3>
+            <h3 className="text-center font-semibold text-lg mb-6">Como usar:</h3>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="text-center">
                 <div className="w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-3 font-bold">
                   1
                 </div>
-                <p className="text-sm">Upload image</p>
+                <p className="text-sm">Envie a imagem</p>
               </div>
               <div className="text-center">
                 <div className="w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-3 font-bold">
                   2
                 </div>
-                <p className="text-sm">See automatic result</p>
+                <p className="text-sm">Veja o resultado automático</p>
               </div>
               <div className="text-center">
                 <div className="w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center mx-auto mb-3 font-bold">
                   3
                 </div>
-                <p className="text-sm">Download your thumbnail</p>
+                <p className="text-sm">Baixe sua thumbnail</p>
               </div>
             </div>
           </Card>
