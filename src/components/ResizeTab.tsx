@@ -15,7 +15,10 @@ type SizePreset = {
 const SIZE_PRESETS: Record<string, SizePreset> = {
   "youtube": { label: "YouTube Thumbnail (1280×720)", width: 1280, height: 720, aspectRatio: "16:9" },
   "reels": { label: "Reels / Shorts (1080×1920)", width: 1080, height: 1920, aspectRatio: "9:16" },
+  "instagram": { label: "Instagram Post (1080×1080)", width: 1080, height: 1080, aspectRatio: "1:1" },
   "portrait": { label: "Portrait / Story (730×1024)", width: 730, height: 1024, aspectRatio: "730:1024" },
+  "a4": { label: "A4 Portrait (720×1024)", width: 720, height: 1024, aspectRatio: "720:1024" },
+  "vertical": { label: "Vertical (720×1280)", width: 720, height: 1280, aspectRatio: "9:16" },
   "banner": { label: "Banner (2000×590)", width: 2000, height: 590, aspectRatio: "2000:590" },
 };
 
