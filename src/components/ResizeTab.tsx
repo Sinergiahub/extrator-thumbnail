@@ -15,7 +15,10 @@ type SizePreset = {
 const SIZE_PRESETS: Record<string, SizePreset> = {
   "youtube": { label: "YouTube Thumbnail (1280×720)", width: 1280, height: 720, aspectRatio: "16:9" },
   "reels": { label: "Reels / Shorts (1080×1920)", width: 1080, height: 1920, aspectRatio: "9:16" },
+  "instagram": { label: "Instagram Post (1080×1080)", width: 1080, height: 1080, aspectRatio: "1:1" },
   "portrait": { label: "Portrait / Story (730×1024)", width: 730, height: 1024, aspectRatio: "730:1024" },
+  "a4": { label: "A4 Portrait (720×1024)", width: 720, height: 1024, aspectRatio: "720:1024" },
+  "vertical": { label: "Vertical (720×1280)", width: 720, height: 1280, aspectRatio: "9:16" },
   "banner": { label: "Banner (2000×590)", width: 2000, height: 590, aspectRatio: "2000:590" },
 };
 
@@ -255,7 +258,7 @@ export const ResizeTab = () => {
               Resize Images for <span className="text-primary">Social Media</span>
             </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-              Convert any image to the perfect size for YouTube thumbnails (1280×720), Reels/Shorts (1080×1920), portrait/story (730×1024), or banner (2000×590)
+              Convert any image to the perfect size for YouTube thumbnails, Reels/Shorts, Instagram posts, portraits, A4, vertical, or banner formats
             </p>
           </div>
 
@@ -274,9 +277,9 @@ export const ResizeTab = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110">
                 <Monitor className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-semibold mb-2">4 Presets</h3>
+              <h3 className="font-semibold mb-2">7 Presets</h3>
               <p className="text-sm text-muted-foreground">
-                YouTube, Reels, Portrait & Banner
+                YouTube, Reels, Instagram, Portrait, A4, Vertical & Banner
               </p>
             </Card>
 
