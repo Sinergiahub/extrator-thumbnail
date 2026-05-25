@@ -209,6 +209,12 @@ export const ResizeTab = () => {
     <div className="space-y-8">
       {batchItems.length > 0 ? (
         <div className="max-w-5xl mx-auto space-y-6">
+          <div className="flex justify-start">
+            <Button onClick={handleNewImage} variant="outline" size="sm" className="gap-2 transition-transform duration-300 hover:scale-105">
+              <ArrowLeft className="w-4 h-4" />
+              Back to menu
+            </Button>
+          </div>
           <div className="text-center space-y-2">
             <h2 className="text-2xl md:text-3xl font-bold">
               {batchItems.length} images resized
