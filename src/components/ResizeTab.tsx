@@ -414,26 +414,27 @@ export const ResizeTab = () => {
               className="hidden"
               id="image-upload"
             />
-            <label
-              htmlFor="image-upload"
-              className="cursor-pointer flex flex-col items-center gap-4"
-            >
-              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center transition-transform duration-300 hover:scale-110">
-                <Upload className="w-8 h-8 text-muted-foreground" />
-              </div>
-              <div className="text-center space-y-3">
+            <div className="flex flex-col items-center gap-4 mt-6">
+              <div className="text-center space-y-2">
                 <p className="font-semibold text-lg">Envie sua(s) imagem(ns)</p>
                 <p className="text-sm text-muted-foreground">
-                  Arraste e solte ou clique para selecionar — selecione várias para receber um ZIP
+                  Arraste e solte ou clique no botão — selecione várias para receber um ZIP
                 </p>
                 <p className="text-xs text-muted-foreground">
                   JPG, PNG, WEBP até 10MB
                 </p>
-                <Button type="button" className="mt-2 transition-transform duration-300 hover:scale-105" disabled={isProcessing}>
-                  {isProcessing ? "Processando..." : "Selecionar Imagem(ns)"}
-                </Button>
               </div>
-            </label>
+              <Button
+                type="button"
+                size="lg"
+                className="gap-2 transition-transform duration-300 hover:scale-105"
+                disabled={isProcessing}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload className="w-5 h-5" />
+                {isProcessing ? "Processando..." : "Selecionar Imagem(ns)"}
+              </Button>
+            </div>
           </Card>
 
           <div className="max-w-4xl mx-auto">
