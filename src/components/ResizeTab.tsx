@@ -359,6 +359,52 @@ export const ResizeTab = () => {
                 })}
               </div>
             </div>
+
+            <div className="mt-6 pt-6 border-t border-border">
+              <p className="text-sm font-semibold mb-3 text-center">📐 Tabela completa de tamanhos recomendados</p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left p-2 font-semibold">Onde</th>
+                      <th className="text-left p-2 font-semibold">Proporção</th>
+                      <th className="text-left p-2 font-semibold">🥉 Leve</th>
+                      <th className="text-left p-2 font-semibold">🥈 Recomendado</th>
+                      <th className="text-left p-2 font-semibold">🥇 Premium (4K)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {PRESET_TABLE.map((row) => (
+                      <tr key={row.title} className="border-b border-border/50">
+                        <td className="p-2 font-medium">{row.title}</td>
+                        <td className="p-2 text-muted-foreground">{row.aspect}</td>
+                        {(["leve", "recomendado", "premium"] as const).map((tier) => {
+                          const key = row[tier];
+                          if (!key) return <td key={tier} className="p-2">—</td>;
+                          const preset = SIZE_PRESETS[key];
+                          const isActive = selectedSize === key;
+                          return (
+                            <td key={tier} className="p-1">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedSize(key)}
+                                className={`w-full px-2 py-1.5 rounded border-2 text-xs font-medium transition-all duration-200 hover:scale-105 ${
+                                  isActive
+                                    ? "border-primary bg-primary/10 text-foreground"
+                                    : "border-border hover:border-primary"
+                                }`}
+                              >
+                                {preset.width} × {preset.height}
+                              </button>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
             <input
               ref={fileInputRef}
               type="file"
