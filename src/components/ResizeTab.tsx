@@ -20,7 +20,38 @@ const SIZE_PRESETS: Record<string, SizePreset> = {
   "a4": { label: "A4 Retrato (720×1024)", width: 720, height: 1024, aspectRatio: "720:1024" },
   "vertical": { label: "Vertical (720×1280)", width: 720, height: 1280, aspectRatio: "9:16" },
   "banner": { label: "Banner (2000×590)", width: 2000, height: 590, aspectRatio: "2000:590" },
+  // Banner do Módulo (vertical) 2:3
+  "modulo-leve": { label: "Módulo Leve (720×1080)", width: 720, height: 1080, aspectRatio: "2:3" },
+  "modulo-rec": { label: "Módulo Recomendado (1080×1620)", width: 1080, height: 1620, aspectRatio: "2:3" },
+  "modulo-premium": { label: "Módulo Premium 4K (1280×1920)", width: 1280, height: 1920, aspectRatio: "2:3" },
+  // Banner/Thumbnail da Aula 16:9
+  "aula-leve": { label: "Aula Leve (1280×720)", width: 1280, height: 720, aspectRatio: "16:9" },
+  "aula-rec": { label: "Aula Recomendado (1920×1080)", width: 1920, height: 1080, aspectRatio: "16:9" },
+  "aula-premium": { label: "Aula Premium 4K (2560×1440)", width: 2560, height: 1440, aspectRatio: "16:9" },
+  // Foto do Produto / Card 1:1
+  "produto-leve": { label: "Produto Leve (800×800)", width: 800, height: 800, aspectRatio: "1:1" },
+  "produto-rec": { label: "Produto Recomendado (1080×1080)", width: 1080, height: 1080, aspectRatio: "1:1" },
+  "produto-premium": { label: "Produto Premium 4K (2048×2048)", width: 2048, height: 2048, aspectRatio: "1:1" },
+  // Banner do Curso ~5:1
+  "curso-leve": { label: "Curso Leve (1440×300)", width: 1440, height: 300, aspectRatio: "~5:1" },
+  "curso-rec": { label: "Curso Recomendado (1920×400)", width: 1920, height: 400, aspectRatio: "~5:1" },
+  "curso-premium": { label: "Curso Premium 4K (2560×533)", width: 2560, height: 533, aspectRatio: "~5:1" },
 };
+
+type PresetGroup = {
+  title: string;
+  aspect: string;
+  leve?: keyof typeof SIZE_PRESETS;
+  recomendado?: keyof typeof SIZE_PRESETS;
+  premium?: keyof typeof SIZE_PRESETS;
+};
+
+const PRESET_TABLE: PresetGroup[] = [
+  { title: "Banner do Módulo (vertical)", aspect: "2:3", leve: "modulo-leve", recomendado: "modulo-rec", premium: "modulo-premium" },
+  { title: "Banner / Thumbnail da Aula", aspect: "16:9", leve: "aula-leve", recomendado: "aula-rec", premium: "aula-premium" },
+  { title: "Foto do Produto / Card da Biblioteca", aspect: "1:1", leve: "produto-leve", recomendado: "produto-rec", premium: "produto-premium" },
+  { title: "Banner do Curso (hero widescreen)", aspect: "~5:1", leve: "curso-leve", recomendado: "curso-rec", premium: "curso-premium" },
+];
 
 export const ResizeTab = () => {
   const [selectedSize, setSelectedSize] = useState<keyof typeof SIZE_PRESETS>("youtube");
@@ -326,6 +357,52 @@ export const ResizeTab = () => {
                     </button>
                   );
                 })}
+              </div>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-border">
+              <p className="text-sm font-semibold mb-3 text-center">📐 Tabela completa de tamanhos recomendados</p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left p-2 font-semibold">Onde</th>
+                      <th className="text-left p-2 font-semibold">Proporção</th>
+                      <th className="text-left p-2 font-semibold">🥉 Leve</th>
+                      <th className="text-left p-2 font-semibold">🥈 Recomendado</th>
+                      <th className="text-left p-2 font-semibold">🥇 Premium (4K)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {PRESET_TABLE.map((row) => (
+                      <tr key={row.title} className="border-b border-border/50">
+                        <td className="p-2 font-medium">{row.title}</td>
+                        <td className="p-2 text-muted-foreground">{row.aspect}</td>
+                        {(["leve", "recomendado", "premium"] as const).map((tier) => {
+                          const key = row[tier];
+                          if (!key) return <td key={tier} className="p-2">—</td>;
+                          const preset = SIZE_PRESETS[key];
+                          const isActive = selectedSize === key;
+                          return (
+                            <td key={tier} className="p-1">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedSize(key)}
+                                className={`w-full px-2 py-1.5 rounded border-2 text-xs font-medium transition-all duration-200 hover:scale-105 ${
+                                  isActive
+                                    ? "border-primary bg-primary/10 text-foreground"
+                                    : "border-border hover:border-primary"
+                                }`}
+                              >
+                                {preset.width} × {preset.height}
+                              </button>
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
             <input
