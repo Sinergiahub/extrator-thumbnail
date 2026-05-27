@@ -36,6 +36,11 @@ const SIZE_PRESETS: Record<string, SizePreset> = {
   "curso-leve": { label: "Curso Leve (1440×300)", width: 1440, height: 300, aspectRatio: "~5:1" },
   "curso-rec": { label: "Curso Recomendado (1920×400)", width: 1920, height: 400, aspectRatio: "~5:1" },
   "curso-premium": { label: "Curso Premium 4K (2560×533)", width: 2560, height: 533, aspectRatio: "~5:1" },
+  // Hero / Banner responsivo (bg-cover) — container 100% largura × altura fixa
+  "hero-mobile": { label: "Hero Mobile (390×256)", width: 390, height: 256, aspectRatio: "~1,5:1" },
+  "hero-notebook": { label: "Hero Notebook (1440×320)", width: 1440, height: 320, aspectRatio: "~4,5:1" },
+  "hero-fullhd": { label: "Hero Full HD (1920×320)", width: 1920, height: 320, aspectRatio: "~6:1" },
+  "hero-ultrawide": { label: "Hero Ultrawide (2560×320)", width: 2560, height: 320, aspectRatio: "~8:1" },
 };
 
 type PresetGroup = {
@@ -51,6 +56,19 @@ const PRESET_TABLE: PresetGroup[] = [
   { title: "Banner / Thumbnail da Aula", aspect: "16:9", leve: "aula-leve", recomendado: "aula-rec", premium: "aula-premium" },
   { title: "Foto do Produto / Card da Biblioteca", aspect: "1:1", leve: "produto-leve", recomendado: "produto-rec", premium: "produto-premium" },
   { title: "Banner do Curso (hero widescreen)", aspect: "~5:1", leve: "curso-leve", recomendado: "curso-rec", premium: "curso-premium" },
+];
+
+type HeroRow = {
+  device: string;
+  key: keyof typeof SIZE_PRESETS;
+  ratio: string;
+};
+
+const HERO_TABLE: HeroRow[] = [
+  { device: "Mobile (~390 px)", key: "hero-mobile", ratio: "~1,5:1" },
+  { device: "Notebook (1440 px)", key: "hero-notebook", ratio: "~4,5:1" },
+  { device: "Full HD (1920 px)", key: "hero-fullhd", ratio: "~6:1" },
+  { device: "Ultrawide (2560 px)", key: "hero-ultrawide", ratio: "~8:1" },
 ];
 
 export const ResizeTab = () => {
