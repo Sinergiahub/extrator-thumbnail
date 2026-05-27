@@ -423,6 +423,51 @@ export const ResizeTab = () => {
                 </table>
               </div>
             </div>
+
+            <div className="mt-6 pt-6 border-t border-border">
+              <p className="text-sm font-semibold mb-1 text-center">🖥️ Hero / Banner responsivo (bg-cover)</p>
+              <p className="text-xs text-muted-foreground mb-3 text-center">
+                Container 100% da largura × altura fixa de 256/320 px. A proporção real varia por dispositivo.
+              </p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left p-2 font-semibold">Dispositivo</th>
+                      <th className="text-left p-2 font-semibold">Container</th>
+                      <th className="text-left p-2 font-semibold">Proporção</th>
+                      <th className="text-left p-2 font-semibold">Selecionar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {HERO_TABLE.map((row) => {
+                      const preset = SIZE_PRESETS[row.key];
+                      const isActive = selectedSize === row.key;
+                      return (
+                        <tr key={row.key} className="border-b border-border/50">
+                          <td className="p-2 font-medium">{row.device}</td>
+                          <td className="p-2 text-muted-foreground">{preset.width} × {preset.height}</td>
+                          <td className="p-2 text-muted-foreground">{row.ratio}</td>
+                          <td className="p-1">
+                            <button
+                              type="button"
+                              onClick={() => setSelectedSize(row.key)}
+                              className={`w-full px-2 py-1.5 rounded border-2 text-xs font-medium transition-all duration-200 hover:scale-105 ${
+                                isActive
+                                  ? "border-primary bg-primary/10 text-foreground"
+                                  : "border-border hover:border-primary"
+                              }`}
+                            >
+                              Usar {preset.width}×{preset.height}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
             <input
               ref={fileInputRef}
               type="file"
