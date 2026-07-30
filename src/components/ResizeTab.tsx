@@ -16,6 +16,7 @@ const SIZE_PRESETS: Record<string, SizePreset> = {
   "youtube": { label: "Thumbnail do YouTube (1280×720)", width: 1280, height: 720, aspectRatio: "16:9" },
   "reels": { label: "Reels / Shorts (1080×1920)", width: 1080, height: 1920, aspectRatio: "9:16" },
   "instagram": { label: "Post do Instagram (1080×1080)", width: 1080, height: 1080, aspectRatio: "1:1" },
+  "quadrado-600": { label: "Quadrado (600×600)", width: 600, height: 600, aspectRatio: "1:1" },
   "portrait": { label: "Retrato / Story (730×1024)", width: 730, height: 1024, aspectRatio: "730:1024" },
   "a4": { label: "A4 Retrato (720×1024)", width: 720, height: 1024, aspectRatio: "720:1024" },
   "vertical": { label: "Vertical (720×1280)", width: 720, height: 1280, aspectRatio: "9:16" },
