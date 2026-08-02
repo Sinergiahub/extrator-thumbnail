@@ -42,6 +42,8 @@ const SIZE_PRESETS: Record<string, SizePreset> = {
   "hero-notebook": { label: "Hero Notebook (1440×320)", width: 1440, height: 320, aspectRatio: "~4,5:1" },
   "hero-fullhd": { label: "Hero Full HD (1920×320)", width: 1920, height: 320, aspectRatio: "~6:1" },
   "hero-ultrawide": { label: "Hero Ultrawide (2560×320)", width: 2560, height: 320, aspectRatio: "~8:1" },
+  // Banner largo 3:1
+  "banner-3x1": { label: "Banner 3:1 (1920×640)", width: 1920, height: 640, aspectRatio: "3:1" },
 };
 
 type PresetGroup = {
