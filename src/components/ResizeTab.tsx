@@ -103,6 +103,10 @@ const FOCUS_POINTS: Record<FocusKey, { label: string; x: number; y: number }> = 
   "bottom-right": { label: "Base dir.", x: 1, y: 1 },
 };
 
+type FitMode = "cover" | "contain";
+type BackgroundMode = "blur" | "color" | "transparent";
+
+
 export const ResizeTab = () => {
   const [selectedSize, setSelectedSize] = useState<keyof typeof SIZE_PRESETS>("youtube");
   const [originalImage, setOriginalImage] = useState<string | null>(null);
@@ -123,6 +127,9 @@ export const ResizeTab = () => {
   const [outputFormat, setOutputFormat] = useState<OutputFormat>("jpg");
   const [quality, setQuality] = useState(90);
   const [focus, setFocus] = useState<FocusKey>("center");
+  const [fitMode, setFitMode] = useState<FitMode>("cover");
+  const [background, setBackground] = useState<BackgroundMode>("blur");
+  const [bgColor, setBgColor] = useState("#000000");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -141,18 +148,43 @@ export const ResizeTab = () => {
     canvas.height = preset.height;
     const ctx = canvas.getContext("2d");
     if (!ctx) return null;
-    if (!OUTPUT_FORMATS[outputFormat].transparent) {
-      ctx.fillStyle = "#000";
-      ctx.fillRect(0, 0, preset.width, preset.height);
-    }
-    const scale = Math.max(preset.width / img.width, preset.height / img.height);
+
+    const supportsAlpha = OUTPUT_FORMATS[outputFormat].transparent;
+    // Formatos sem alpha (JPG) nunca podem ficar transparentes
+    const bgMode: BackgroundMode =
+      background === "transparent" && !supportsAlpha ? "color" : background;
+
+    const scale =
+      fitMode === "cover"
+        ? Math.max(preset.width / img.width, preset.height / img.height)
+        : Math.min(preset.width / img.width, preset.height / img.height);
     const w = img.width * scale;
     const h = img.height * scale;
     const x = (preset.width - w) * point.x;
     const y = (preset.height - h) * point.y;
+
+    const hasEmptyArea = fitMode === "contain" && (w < preset.width || h < preset.height);
+
+    if (bgMode === "color" || (!hasEmptyArea && !supportsAlpha)) {
+      ctx.fillStyle = bgMode === "color" ? bgColor : "#000000";
+      ctx.fillRect(0, 0, preset.width, preset.height);
+    }
+
+    if (hasEmptyArea && bgMode === "blur") {
+      // Preenche o fundo com a própria imagem ampliada e desfocada
+      const coverScale = Math.max(preset.width / img.width, preset.height / img.height) * 1.1;
+      const cw = img.width * coverScale;
+      const ch = img.height * coverScale;
+      ctx.save();
+      ctx.filter = "blur(24px)";
+      ctx.drawImage(img, (preset.width - cw) / 2, (preset.height - ch) / 2, cw, ch);
+      ctx.restore();
+    }
+
     ctx.drawImage(img, x, y, w, h);
     return canvas;
   };
+
 
   const renderFromDataUrl = (dataUrl: string): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -264,7 +296,7 @@ export const ResizeTab = () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSize, outputFormat, quality, focus, originalImage]);
+  }, [selectedSize, outputFormat, quality, focus, fitMode, background, bgColor, originalImage]);
 
 
   const handleBatchUpload = async (files: File[]) => {
@@ -537,6 +569,87 @@ export const ResizeTab = () => {
               </p>
             </div>
 
+            <div className="mt-6 pt-6 border-t border-border">
+              <p className="text-sm font-semibold mb-1 text-center">🖼️ Enquadramento e fundo</p>
+              <p className="text-[11px] text-muted-foreground mb-3 text-center">
+                Escolha entre cortar a imagem ou encaixá-la inteira preenchendo as áreas vazias
+              </p>
+
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {([
+                  { key: "cover" as FitMode, label: "Preencher (cortar)", hint: "sem áreas vazias" },
+                  { key: "contain" as FitMode, label: "Encaixar (imagem inteira)", hint: "gera áreas vazias" },
+                ]).map((opt) => (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    onClick={() => setFitMode(opt.key)}
+                    className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-300 hover:scale-105 ${
+                      fitMode === opt.key
+                        ? "border-primary bg-primary/10 text-foreground"
+                        : "border-border hover:border-primary"
+                    }`}
+                  >
+                    {opt.label}
+                    <span className="block text-[10px] text-muted-foreground font-normal">
+                      {opt.hint}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {fitMode === "contain" && (
+                <div className="animate-fade-in">
+                  <p className="text-xs font-medium mb-2">Fundo das áreas vazias:</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    {([
+                      { key: "blur" as BackgroundMode, label: "Blur", hint: "imagem desfocada" },
+                      { key: "color" as BackgroundMode, label: "Cor sólida", hint: "escolha a cor" },
+                      { key: "transparent" as BackgroundMode, label: "Transparente", hint: "PNG / WebP" },
+                    ]).map((opt) => {
+                      const disabled =
+                        opt.key === "transparent" && !OUTPUT_FORMATS[outputFormat].transparent;
+                      return (
+                        <button
+                          key={opt.key}
+                          type="button"
+                          disabled={disabled}
+                          onClick={() => setBackground(opt.key)}
+                          className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-300 ${
+                            disabled
+                              ? "border-border opacity-40 cursor-not-allowed"
+                              : background === opt.key
+                                ? "border-primary bg-primary/10 text-foreground hover:scale-105"
+                                : "border-border hover:border-primary hover:scale-105"
+                          }`}
+                        >
+                          {opt.label}
+                          <span className="block text-[10px] text-muted-foreground font-normal">
+                            {disabled ? "requer PNG/WebP" : opt.hint}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {background === "color" && (
+                    <div className="mt-4 flex items-center justify-center gap-3">
+                      <label className="text-xs font-medium" htmlFor="bg-color">
+                        Cor do fundo:
+                      </label>
+                      <input
+                        id="bg-color"
+                        type="color"
+                        value={bgColor}
+                        onChange={(e) => setBgColor(e.target.value)}
+                        className="h-9 w-16 rounded-md border-2 border-border bg-transparent cursor-pointer"
+                      />
+                      <span className="text-xs text-muted-foreground uppercase">{bgColor}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
 
             <div className="mt-6 pt-6 border-t border-border">
