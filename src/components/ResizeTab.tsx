@@ -1320,6 +1320,51 @@ export const ResizeTab = () => {
                 </table>
               </div>
             </div>
+
+            <div className="mt-6 pt-6 border-t border-border">
+              <p className="text-sm font-semibold mb-1 text-center">📱 Capas sociais e anúncios</p>
+              <p className="text-xs text-muted-foreground mb-3 text-center">
+                Tamanhos recomendados para capas, posts, perfis e anúncios pagos.
+              </p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left p-2 font-semibold">Rede</th>
+                      <th className="text-left p-2 font-semibold">Formato</th>
+                      <th className="text-left p-2 font-semibold">Proporção</th>
+                      <th className="text-left p-2 font-semibold">Tamanho</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {SOCIAL_ADS_TABLE.map((row) => {
+                      const preset = SIZE_PRESETS[row.key];
+                      const isActive = selectedSize === row.key;
+                      return (
+                        <tr key={`${row.network}-${row.format}`} className="border-b border-border/50">
+                          <td className="p-2 font-medium">{row.network}</td>
+                          <td className="p-2 text-muted-foreground">{row.format}</td>
+                          <td className="p-2 text-muted-foreground">{row.ratio}</td>
+                          <td className="p-1">
+                            <button
+                              type="button"
+                              onClick={() => setSelectedSize(row.key)}
+                              className={`w-full px-2 py-1.5 rounded border-2 text-xs font-medium transition-all duration-200 hover:scale-105 ${
+                                isActive
+                                  ? "border-primary bg-primary/10 text-foreground"
+                                  : "border-border hover:border-primary"
+                              }`}
+                            >
+                              {preset.width}×{preset.height}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
             <input
               ref={fileInputRef}
               type="file"
