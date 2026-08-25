@@ -380,6 +380,8 @@ export const ResizeTab = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     selectedSize,
+    customWidth,
+    customHeight,
     outputFormat,
     quality,
     focus,
