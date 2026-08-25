@@ -604,8 +604,75 @@ export const ResizeTab = () => {
                     </button>
                   );
                 })}
+                <button
+                  type="button"
+                  onClick={() => setSelectedSize("custom")}
+                  className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-300 hover:scale-105 ${
+                    selectedSize === "custom"
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border hover:border-primary"
+                  }`}
+                >
+                  ✏️ Personalizado
+                </button>
               </div>
+
+              {selectedSize === "custom" && (
+                <div className="animate-fade-in mt-4 p-4 rounded-lg border-2 border-primary/40 bg-primary/5">
+                  <p className="text-xs font-medium mb-3 text-center">
+                    Digite as dimensões desejadas (16 a 8000 px)
+                  </p>
+                  <div className="flex items-end justify-center gap-3 flex-wrap">
+                    <div>
+                      <label className="block text-[11px] text-muted-foreground mb-1" htmlFor="custom-w">
+                        Largura (px)
+                      </label>
+                      <input
+                        id="custom-w"
+                        type="number"
+                        min={16}
+                        max={8000}
+                        value={customWidth}
+                        onChange={(e) => setCustomWidth(Number(e.target.value))}
+                        className="w-28 h-10 px-3 rounded-md border-2 border-border bg-background text-sm focus:border-primary outline-none transition-colors"
+                      />
+                    </div>
+                    <span className="pb-3 text-muted-foreground">×</span>
+                    <div>
+                      <label className="block text-[11px] text-muted-foreground mb-1" htmlFor="custom-h">
+                        Altura (px)
+                      </label>
+                      <input
+                        id="custom-h"
+                        type="number"
+                        min={16}
+                        max={8000}
+                        value={customHeight}
+                        onChange={(e) => setCustomHeight(Number(e.target.value))}
+                        className="w-28 h-10 px-3 rounded-md border-2 border-border bg-background text-sm focus:border-primary outline-none transition-colors"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCustomWidth(clampDim(customHeight));
+                        setCustomHeight(clampDim(customWidth));
+                      }}
+                      className="h-10 px-3 rounded-md border-2 border-border text-xs font-medium hover:border-primary hover:scale-105 transition-all duration-300"
+                    >
+                      ⇄ Inverter
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-3 text-center">
+                    Saída: <span className="text-primary font-semibold">
+                      {activePreset.width} × {activePreset.height} px
+                    </span>{" "}
+                    ({activePreset.aspectRatio})
+                  </p>
+                </div>
+              )}
             </div>
+
 
             <div className="mb-2">
               <p className="text-sm font-semibold mb-3 text-center">Formato de saída:</p>
