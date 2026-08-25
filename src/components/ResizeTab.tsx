@@ -105,6 +105,19 @@ const FOCUS_POINTS: Record<FocusKey, { label: string; x: number; y: number }> = 
 
 type FitMode = "cover" | "contain";
 type BackgroundMode = "blur" | "color" | "transparent";
+type WatermarkType = "text" | "logo";
+
+const WM_POSITIONS: Record<string, { label: string; x: number; y: number }> = {
+  "top-left": { label: "Topo esq.", x: 0, y: 0 },
+  "top": { label: "Topo", x: 0.5, y: 0 },
+  "top-right": { label: "Topo dir.", x: 1, y: 0 },
+  "left": { label: "Esquerda", x: 0, y: 0.5 },
+  "center": { label: "Centro", x: 0.5, y: 0.5 },
+  "right": { label: "Direita", x: 1, y: 0.5 },
+  "bottom-left": { label: "Base esq.", x: 0, y: 1 },
+  "bottom": { label: "Base", x: 0.5, y: 1 },
+  "bottom-right": { label: "Base dir.", x: 1, y: 1 },
+};
 
 
 export const ResizeTab = () => {
