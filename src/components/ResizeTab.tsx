@@ -156,6 +156,15 @@ export const ResizeTab = () => {
   const wmLogoInputRef = useRef<HTMLInputElement>(null);
   const [customWidth, setCustomWidth] = useState(1200);
   const [customHeight, setCustomHeight] = useState(630);
+  const [prefix, setPrefix] = useState("");
+  const [suffix, setSuffix] = useState("");
+  const [nameMode, setNameMode] = useState<"original" | "sequence">("original");
+  const [baseName, setBaseName] = useState("imagem");
+  const [autoNumber, setAutoNumber] = useState(false);
+  const [startNumber, setStartNumber] = useState(1);
+  const [padding, setPadding] = useState(2);
+  const [includeDims, setIncludeDims] = useState(true);
+  const [zipName, setZipName] = useState("imagens");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -447,23 +456,46 @@ export const ResizeTab = () => {
     }
   };
 
+  const sanitize = (s: string) => s.replace(/[\\/:*?"<>|]+/g, "").trim();
+
+  const buildFileName = (originalName: string, index: number) => {
+    const ext = OUTPUT_FORMATS[outputFormat].ext;
+    const preset = activePreset;
+    const base =
+      nameMode === "sequence"
+        ? sanitize(baseName) || "imagem"
+        : sanitize(originalName) || `imagem-${index + 1}`;
+    const number =
+      nameMode === "sequence" || autoNumber
+        ? `-${String(startNumber + index).padStart(padding, "0")}`
+        : "";
+    const dims = includeDims ? `-${preset.width}x${preset.height}` : "";
+    return `${sanitize(prefix)}${base}${number}${dims}${sanitize(suffix)}.${ext}`;
+  };
+
   const handleDownloadZip = async () => {
     if (batchItems.length === 0) return;
     const preset = activePreset;
     const ext = OUTPUT_FORMATS[outputFormat].ext;
     const zip = new JSZip();
-    batchItems.forEach((item) => {
+    const used = new Map<string, number>();
+    batchItems.forEach((item, idx) => {
       const base64 = item.resized.split(",")[1];
-      zip.file(`${item.name}-${preset.width}x${preset.height}.${ext}`, base64, { base64: true });
+      let name = buildFileName(item.name, idx);
+      const count = used.get(name) ?? 0;
+      used.set(name, count + 1);
+      if (count > 0) name = name.replace(/(\.[^.]+)$/, `-${count + 1}$1`);
+      zip.file(name, base64, { base64: true });
     });
     const blob = await zip.generateAsync({ type: "blob" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.download = `resized-${preset.width}x${preset.height}-${ext}.zip`;
+    link.download = `${sanitize(zipName) || "imagens"}-${preset.width}x${preset.height}-${ext}.zip`;
     link.href = url;
     link.click();
     URL.revokeObjectURL(url);
   };
+
 
   const handleDownload = () => {
     if (!resizedImage) return;
@@ -514,6 +546,154 @@ export const ResizeTab = () => {
               🔄 Novo Lote
             </Button>
           </div>
+
+          <Card className="p-6 transition-all duration-300 hover:border-primary hover:border-2 hover:shadow-xl hover:shadow-primary/20">
+            <p className="text-sm font-semibold mb-1 text-center">🏷️ Renomear em lote</p>
+            <p className="text-[11px] text-muted-foreground mb-4 text-center">
+              Defina prefixo, sufixo e numeração automática dos arquivos do ZIP
+            </p>
+
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              {([
+                { key: "original" as const, label: "Manter nome original", hint: "arquivo enviado" },
+                { key: "sequence" as const, label: "Nome + numeração", hint: "ex.: imagem-01" },
+              ]).map((opt) => (
+                <button
+                  key={opt.key}
+                  type="button"
+                  onClick={() => setNameMode(opt.key)}
+                  className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-300 hover:scale-105 ${
+                    nameMode === opt.key
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border hover:border-primary"
+                  }`}
+                >
+                  {opt.label}
+                  <span className="block text-[10px] text-muted-foreground font-normal">
+                    {opt.hint}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-3">
+              <div>
+                <label className="block text-[11px] text-muted-foreground mb-1" htmlFor="rn-prefix">
+                  Prefixo
+                </label>
+                <input
+                  id="rn-prefix"
+                  type="text"
+                  value={prefix}
+                  onChange={(e) => setPrefix(e.target.value)}
+                  placeholder="ex.: curso-"
+                  className="w-full h-10 px-3 rounded-md border-2 border-border bg-background text-sm focus:border-primary outline-none transition-colors"
+                />
+              </div>
+              {nameMode === "sequence" ? (
+                <div>
+                  <label className="block text-[11px] text-muted-foreground mb-1" htmlFor="rn-base">
+                    Nome base
+                  </label>
+                  <input
+                    id="rn-base"
+                    type="text"
+                    value={baseName}
+                    onChange={(e) => setBaseName(e.target.value)}
+                    placeholder="imagem"
+                    className="w-full h-10 px-3 rounded-md border-2 border-border bg-background text-sm focus:border-primary outline-none transition-colors"
+                  />
+                </div>
+              ) : (
+                <div className="flex items-end">
+                  <label className="flex items-center gap-2 text-xs cursor-pointer h-10">
+                    <input
+                      type="checkbox"
+                      checked={autoNumber}
+                      onChange={(e) => setAutoNumber(e.target.checked)}
+                      className="h-4 w-4 accent-primary cursor-pointer"
+                    />
+                    Adicionar numeração
+                  </label>
+                </div>
+              )}
+              <div>
+                <label className="block text-[11px] text-muted-foreground mb-1" htmlFor="rn-suffix">
+                  Sufixo
+                </label>
+                <input
+                  id="rn-suffix"
+                  type="text"
+                  value={suffix}
+                  onChange={(e) => setSuffix(e.target.value)}
+                  placeholder="ex.: -final"
+                  className="w-full h-10 px-3 rounded-md border-2 border-border bg-background text-sm focus:border-primary outline-none transition-colors"
+                />
+              </div>
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-3 mt-3">
+              <div>
+                <label className="block text-[11px] text-muted-foreground mb-1" htmlFor="rn-start">
+                  Começar em
+                </label>
+                <input
+                  id="rn-start"
+                  type="number"
+                  min={0}
+                  value={startNumber}
+                  onChange={(e) => setStartNumber(Math.max(0, Number(e.target.value) || 0))}
+                  className="w-full h-10 px-3 rounded-md border-2 border-border bg-background text-sm focus:border-primary outline-none transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] text-muted-foreground mb-1" htmlFor="rn-pad">
+                  Dígitos (01, 001…)
+                </label>
+                <input
+                  id="rn-pad"
+                  type="number"
+                  min={1}
+                  max={5}
+                  value={padding}
+                  onChange={(e) => setPadding(Math.min(5, Math.max(1, Number(e.target.value) || 1)))}
+                  className="w-full h-10 px-3 rounded-md border-2 border-border bg-background text-sm focus:border-primary outline-none transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] text-muted-foreground mb-1" htmlFor="rn-zip">
+                  Nome do ZIP
+                </label>
+                <input
+                  id="rn-zip"
+                  type="text"
+                  value={zipName}
+                  onChange={(e) => setZipName(e.target.value)}
+                  placeholder="imagens"
+                  className="w-full h-10 px-3 rounded-md border-2 border-border bg-background text-sm focus:border-primary outline-none transition-colors"
+                />
+              </div>
+            </div>
+
+            <label className="flex items-center justify-center gap-2 text-xs cursor-pointer mt-4">
+              <input
+                type="checkbox"
+                checked={includeDims}
+                onChange={(e) => setIncludeDims(e.target.checked)}
+                className="h-4 w-4 accent-primary cursor-pointer"
+              />
+              Incluir dimensões no nome ({activePreset.width}x{activePreset.height})
+            </label>
+
+            <p className="text-[11px] text-muted-foreground mt-4 text-center">
+              Prévia:{" "}
+              <span className="text-primary font-semibold break-all">
+                {buildFileName(batchItems[0]?.name ?? "imagem", 0)}
+              </span>
+            </p>
+          </Card>
+
+
 
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
             {batchItems.map((item, idx) => (
