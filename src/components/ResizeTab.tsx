@@ -130,8 +130,10 @@ export const ResizeTab = () => {
         const ctx = canvas.getContext("2d");
         
         if (ctx) {
-          ctx.fillStyle = "#000";
-          ctx.fillRect(0, 0, preset.width, preset.height);
+          if (!OUTPUT_FORMATS[outputFormat].transparent) {
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, preset.width, preset.height);
+          }
           
           const scale = Math.max(preset.width / img.width, preset.height / img.height);
           const x = (preset.width - img.width * scale) / 2;
@@ -139,14 +141,17 @@ export const ResizeTab = () => {
           
           ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
           
-          const resized = canvas.toDataURL("image/jpeg", 0.9);
+          const resized = exportCanvas(canvas);
           setResizedImage(resized);
           
           setImageInfo({
-            format: `JPG (90%)`,
+            format: OUTPUT_FORMATS[outputFormat].lossy
+              ? `${OUTPUT_FORMATS[outputFormat].label} (${quality}%)`
+              : OUTPUT_FORMATS[outputFormat].label,
             originalSize: file.size / 1024,
             aspectRatio: preset.aspectRatio,
           });
+
           
           toast({
             title: "Imagem processada!",
