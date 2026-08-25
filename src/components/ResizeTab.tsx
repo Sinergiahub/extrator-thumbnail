@@ -45,7 +45,26 @@ const SIZE_PRESETS: Record<string, SizePreset> = {
   "hero-ultrawide": { label: "Hero Ultrawide (2560×320)", width: 2560, height: 320, aspectRatio: "~8:1" },
   // Banner largo 3:1
   "banner-3x1": { label: "Banner 3:1 (1920×640)", width: 1920, height: 640, aspectRatio: "3:1" },
+  // Capas sociais
+  "facebook-cover": { label: "Capa Facebook (820×312)", width: 820, height: 312, aspectRatio: "~2,6:1" },
+  "facebook-post": { label: "Post Facebook (1200×630)", width: 1200, height: 630, aspectRatio: "1,91:1" },
+  "linkedin-cover": { label: "Capa LinkedIn (1584×396)", width: 1584, height: 396, aspectRatio: "4:1" },
+  "linkedin-post": { label: "Post LinkedIn (1200×627)", width: 1200, height: 627, aspectRatio: "~1,91:1" },
+  "twitter-cover": { label: "Capa Twitter/X (1500×500)", width: 1500, height: 500, aspectRatio: "3:1" },
+  "twitter-post": { label: "Post Twitter/X (1600×900)", width: 1600, height: 900, aspectRatio: "16:9" },
+  // Stories e TikTok
+  "story-instagram": { label: "Story Instagram / Facebook / Meta (1080×1920)", width: 1080, height: 1920, aspectRatio: "9:16" },
+  "tiktok": { label: "TikTok (1080×1920)", width: 1080, height: 1920, aspectRatio: "9:16" },
+  "tiktok-profile": { label: "Perfil TikTok (200×200)", width: 200, height: 200, aspectRatio: "1:1" },
+  // Anúncios (Google Ads e Meta Ads)
+  "google-medium-rectangle": { label: "Google Ads — 300×250", width: 300, height: 250, aspectRatio: "6:5" },
+  "google-leaderboard": { label: "Google Ads — 728×90", width: 728, height: 90, aspectRatio: "728:90" },
+  "google-wide-skyscraper": { label: "Google Ads — 160×600", width: 160, height: 600, aspectRatio: "4:15" },
+  "google-mobile-banner": { label: "Google Ads — 320×50", width: 320, height: 50, aspectRatio: "32:5" },
+  "google-half-page": { label: "Google Ads — 300×600", width: 300, height: 600, aspectRatio: "1:2" },
+  "meta-feed": { label: "Meta Ads — Feed (1200×628)", width: 1200, height: 628, aspectRatio: "1,91:1" },
 };
+
 
 type PresetGroup = {
   title: string;
