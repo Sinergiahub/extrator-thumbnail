@@ -781,9 +781,9 @@ export const ResizeTab = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110">
                 <Monitor className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-semibold mb-2">26 Presets</h3>
+              <h3 className="font-semibold mb-2">41 Presets</h3>
               <p className="text-sm text-muted-foreground">
-                YouTube, Instagram, Reels, banners, módulos, aulas, produtos e hero
+                YouTube, Instagram, Reels, TikTok, Stories, capas Facebook/LinkedIn/Twitter, anúncios Google/Meta, banners, módulos, aulas, produtos e hero
               </p>
             </Card>
 
