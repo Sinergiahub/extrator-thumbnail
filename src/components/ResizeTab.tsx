@@ -156,6 +156,15 @@ export const ResizeTab = () => {
   const wmLogoInputRef = useRef<HTMLInputElement>(null);
   const [customWidth, setCustomWidth] = useState(1200);
   const [customHeight, setCustomHeight] = useState(630);
+  const [prefix, setPrefix] = useState("");
+  const [suffix, setSuffix] = useState("");
+  const [nameMode, setNameMode] = useState<"original" | "sequence">("original");
+  const [baseName, setBaseName] = useState("imagem");
+  const [autoNumber, setAutoNumber] = useState(false);
+  const [startNumber, setStartNumber] = useState(1);
+  const [padding, setPadding] = useState(2);
+  const [includeDims, setIncludeDims] = useState(true);
+  const [zipName, setZipName] = useState("imagens");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
