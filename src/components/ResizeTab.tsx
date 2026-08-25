@@ -123,6 +123,9 @@ export const ResizeTab = () => {
   const [outputFormat, setOutputFormat] = useState<OutputFormat>("jpg");
   const [quality, setQuality] = useState(90);
   const [focus, setFocus] = useState<FocusKey>("center");
+  const [fitMode, setFitMode] = useState<FitMode>("cover");
+  const [background, setBackground] = useState<BackgroundMode>("blur");
+  const [bgColor, setBgColor] = useState("#000000");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -141,18 +144,43 @@ export const ResizeTab = () => {
     canvas.height = preset.height;
     const ctx = canvas.getContext("2d");
     if (!ctx) return null;
-    if (!OUTPUT_FORMATS[outputFormat].transparent) {
-      ctx.fillStyle = "#000";
-      ctx.fillRect(0, 0, preset.width, preset.height);
-    }
-    const scale = Math.max(preset.width / img.width, preset.height / img.height);
+
+    const supportsAlpha = OUTPUT_FORMATS[outputFormat].transparent;
+    // Formatos sem alpha (JPG) nunca podem ficar transparentes
+    const bgMode: BackgroundMode =
+      background === "transparent" && !supportsAlpha ? "color" : background;
+
+    const scale =
+      fitMode === "cover"
+        ? Math.max(preset.width / img.width, preset.height / img.height)
+        : Math.min(preset.width / img.width, preset.height / img.height);
     const w = img.width * scale;
     const h = img.height * scale;
     const x = (preset.width - w) * point.x;
     const y = (preset.height - h) * point.y;
+
+    const hasEmptyArea = fitMode === "contain" && (w < preset.width || h < preset.height);
+
+    if (bgMode === "color" || (!hasEmptyArea && !supportsAlpha)) {
+      ctx.fillStyle = bgMode === "color" ? bgColor : "#000000";
+      ctx.fillRect(0, 0, preset.width, preset.height);
+    }
+
+    if (hasEmptyArea && bgMode === "blur") {
+      // Preenche o fundo com a própria imagem ampliada e desfocada
+      const coverScale = Math.max(preset.width / img.width, preset.height / img.height) * 1.1;
+      const cw = img.width * coverScale;
+      const ch = img.height * coverScale;
+      ctx.save();
+      ctx.filter = "blur(24px)";
+      ctx.drawImage(img, (preset.width - cw) / 2, (preset.height - ch) / 2, cw, ch);
+      ctx.restore();
+    }
+
     ctx.drawImage(img, x, y, w, h);
     return canvas;
   };
+
 
   const renderFromDataUrl = (dataUrl: string): Promise<string> =>
     new Promise((resolve, reject) => {
