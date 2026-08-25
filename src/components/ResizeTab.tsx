@@ -507,6 +507,36 @@ export const ResizeTab = () => {
               )}
             </div>
 
+            <div className="mt-6 pt-6 border-t border-border">
+              <p className="text-sm font-semibold mb-1 text-center">🎯 Ponto de foco do corte</p>
+              <p className="text-[11px] text-muted-foreground mb-3 text-center">
+                Escolha qual parte da imagem deve ser preservada ao recortar
+              </p>
+              <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto">
+                {(Object.keys(FOCUS_POINTS) as FocusKey[]).map((key) => {
+                  const isActive = focus === key;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setFocus(key)}
+                      title={FOCUS_POINTS[key].label}
+                      className={`aspect-square rounded-lg border-2 text-[10px] font-medium transition-all duration-300 hover:scale-105 flex items-center justify-center ${
+                        isActive
+                          ? "border-primary bg-primary/10 text-foreground shadow-lg"
+                          : "border-border hover:border-primary text-muted-foreground"
+                      }`}
+                    >
+                      {FOCUS_POINTS[key].label}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-2 text-center">
+                Atual: <span className="text-primary font-semibold">{FOCUS_POINTS[focus].label}</span>
+              </p>
+            </div>
+
 
 
             <div className="mt-6 pt-6 border-t border-border">
