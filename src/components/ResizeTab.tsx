@@ -154,8 +154,24 @@ export const ResizeTab = () => {
   const [wmLogoVersion, setWmLogoVersion] = useState(0);
   const wmLogoImgRef = useRef<HTMLImageElement | null>(null);
   const wmLogoInputRef = useRef<HTMLInputElement>(null);
+  const [customWidth, setCustomWidth] = useState(1200);
+  const [customHeight, setCustomHeight] = useState(630);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  const clampDim = (n: number) => Math.min(8000, Math.max(16, Math.round(n) || 16));
+
+  const activePreset: SizePreset =
+    selectedSize === "custom"
+      ? {
+          label: `Personalizado (${clampDim(customWidth)}×${clampDim(customHeight)})`,
+          width: clampDim(customWidth),
+          height: clampDim(customHeight),
+          aspectRatio: `${clampDim(customWidth)}:${clampDim(customHeight)}`,
+        }
+      : SIZE_PRESETS[selectedSize] ?? SIZE_PRESETS["youtube"];
+
+
 
   const exportCanvas = (canvas: HTMLCanvasElement) => {
     const fmt = OUTPUT_FORMATS[outputFormat];
@@ -165,7 +181,7 @@ export const ResizeTab = () => {
   };
 
   const drawToCanvas = (img: HTMLImageElement) => {
-    const preset = SIZE_PRESETS[selectedSize];
+    const preset = activePreset;
     const point = FOCUS_POINTS[focus];
     const canvas = document.createElement("canvas");
     canvas.width = preset.width;
@@ -286,7 +302,7 @@ export const ResizeTab = () => {
       return;
     }
 
-    const preset = SIZE_PRESETS[selectedSize];
+    const preset = activePreset;
 
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -364,6 +380,8 @@ export const ResizeTab = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     selectedSize,
+    customWidth,
+    customHeight,
     outputFormat,
     quality,
     focus,
@@ -416,7 +434,7 @@ export const ResizeTab = () => {
       setResizedImage(null);
       toast({
         title: "Lote processado!",
-        description: `${results.length} imagens redimensionadas para ${SIZE_PRESETS[selectedSize].width}×${SIZE_PRESETS[selectedSize].height}px`,
+        description: `${results.length} imagens redimensionadas para ${activePreset.width}×${activePreset.height}px`,
       });
     } catch (err) {
       toast({
@@ -431,7 +449,7 @@ export const ResizeTab = () => {
 
   const handleDownloadZip = async () => {
     if (batchItems.length === 0) return;
-    const preset = SIZE_PRESETS[selectedSize];
+    const preset = activePreset;
     const ext = OUTPUT_FORMATS[outputFormat].ext;
     const zip = new JSZip();
     batchItems.forEach((item) => {
@@ -449,7 +467,7 @@ export const ResizeTab = () => {
 
   const handleDownload = () => {
     if (!resizedImage) return;
-    const preset = SIZE_PRESETS[selectedSize];
+    const preset = activePreset;
     const link = document.createElement("a");
     link.download = `image-${preset.width}x${preset.height}.${OUTPUT_FORMATS[outputFormat].ext}`;
     link.href = resizedImage;
@@ -483,7 +501,7 @@ export const ResizeTab = () => {
               {batchItems.length} imagens redimensionadas
             </h2>
             <p className="text-muted-foreground text-sm">
-              {SIZE_PRESETS[selectedSize].label}
+              {activePreset.label}
             </p>
           </div>
 
@@ -502,7 +520,7 @@ export const ResizeTab = () => {
               <Card key={idx} className="p-3 space-y-2 transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
                 <div
                   className="bg-muted rounded-lg overflow-hidden flex items-center justify-center"
-                  style={{ aspectRatio: `${SIZE_PRESETS[selectedSize].width} / ${SIZE_PRESETS[selectedSize].height}` }}
+                  style={{ aspectRatio: `${activePreset.width} / ${activePreset.height}` }}
                 >
                   <img src={item.resized} alt={item.name} className="w-full h-full object-contain" />
                 </div>
@@ -586,8 +604,75 @@ export const ResizeTab = () => {
                     </button>
                   );
                 })}
+                <button
+                  type="button"
+                  onClick={() => setSelectedSize("custom")}
+                  className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-300 hover:scale-105 ${
+                    selectedSize === "custom"
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border hover:border-primary"
+                  }`}
+                >
+                  ✏️ Personalizado
+                </button>
               </div>
+
+              {selectedSize === "custom" && (
+                <div className="animate-fade-in mt-4 p-4 rounded-lg border-2 border-primary/40 bg-primary/5">
+                  <p className="text-xs font-medium mb-3 text-center">
+                    Digite as dimensões desejadas (16 a 8000 px)
+                  </p>
+                  <div className="flex items-end justify-center gap-3 flex-wrap">
+                    <div>
+                      <label className="block text-[11px] text-muted-foreground mb-1" htmlFor="custom-w">
+                        Largura (px)
+                      </label>
+                      <input
+                        id="custom-w"
+                        type="number"
+                        min={16}
+                        max={8000}
+                        value={customWidth}
+                        onChange={(e) => setCustomWidth(Number(e.target.value))}
+                        className="w-28 h-10 px-3 rounded-md border-2 border-border bg-background text-sm focus:border-primary outline-none transition-colors"
+                      />
+                    </div>
+                    <span className="pb-3 text-muted-foreground">×</span>
+                    <div>
+                      <label className="block text-[11px] text-muted-foreground mb-1" htmlFor="custom-h">
+                        Altura (px)
+                      </label>
+                      <input
+                        id="custom-h"
+                        type="number"
+                        min={16}
+                        max={8000}
+                        value={customHeight}
+                        onChange={(e) => setCustomHeight(Number(e.target.value))}
+                        className="w-28 h-10 px-3 rounded-md border-2 border-border bg-background text-sm focus:border-primary outline-none transition-colors"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCustomWidth(clampDim(customHeight));
+                        setCustomHeight(clampDim(customWidth));
+                      }}
+                      className="h-10 px-3 rounded-md border-2 border-border text-xs font-medium hover:border-primary hover:scale-105 transition-all duration-300"
+                    >
+                      ⇄ Inverter
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-3 text-center">
+                    Saída: <span className="text-primary font-semibold">
+                      {activePreset.width} × {activePreset.height} px
+                    </span>{" "}
+                    ({activePreset.aspectRatio})
+                  </p>
+                </div>
+              )}
             </div>
+
 
             <div className="mb-2">
               <p className="text-sm font-semibold mb-3 text-center">Formato de saída:</p>
@@ -1093,10 +1178,10 @@ export const ResizeTab = () => {
               <div className="flex justify-between items-center">
                 <h3 className="font-semibold">Imagem Redimensionada</h3>
                 <span className="text-xs text-muted-foreground">
-                  {SIZE_PRESETS[selectedSize].width} × {SIZE_PRESETS[selectedSize].height}
+                  {activePreset.width} × {activePreset.height}
                 </span>
               </div>
-              <div className="bg-muted rounded-lg overflow-hidden flex items-center justify-center" style={{ aspectRatio: `${SIZE_PRESETS[selectedSize].width} / ${SIZE_PRESETS[selectedSize].height}` }}>
+              <div className="bg-muted rounded-lg overflow-hidden flex items-center justify-center" style={{ aspectRatio: `${activePreset.width} / ${activePreset.height}` }}>
                 <img
                   src={resizedImage || ""}
                   alt="Resized"
