@@ -151,6 +151,7 @@ export const ResizeTab = () => {
   const [wmScale, setWmScale] = useState(20);
   const [wmPosition, setWmPosition] = useState("bottom-right");
   const [wmLogo, setWmLogo] = useState<string | null>(null);
+  const [wmLogoVersion, setWmLogoVersion] = useState(0);
   const wmLogoImgRef = useRef<HTMLImageElement | null>(null);
   const wmLogoInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
