@@ -227,15 +227,16 @@ export const ResizeTab = () => {
   const handleDownloadZip = async () => {
     if (batchItems.length === 0) return;
     const preset = SIZE_PRESETS[selectedSize];
+    const ext = OUTPUT_FORMATS[outputFormat].ext;
     const zip = new JSZip();
     batchItems.forEach((item) => {
       const base64 = item.resized.split(",")[1];
-      zip.file(`${item.name}-${preset.width}x${preset.height}.jpg`, base64, { base64: true });
+      zip.file(`${item.name}-${preset.width}x${preset.height}.${ext}`, base64, { base64: true });
     });
     const blob = await zip.generateAsync({ type: "blob" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.download = `resized-${preset.width}x${preset.height}.zip`;
+    link.download = `resized-${preset.width}x${preset.height}-${ext}.zip`;
     link.href = url;
     link.click();
     URL.revokeObjectURL(url);
@@ -245,10 +246,11 @@ export const ResizeTab = () => {
     if (!resizedImage) return;
     const preset = SIZE_PRESETS[selectedSize];
     const link = document.createElement("a");
-    link.download = `image-${preset.width}x${preset.height}.jpg`;
+    link.download = `image-${preset.width}x${preset.height}.${OUTPUT_FORMATS[outputFormat].ext}`;
     link.href = resizedImage;
     link.click();
   };
+
 
   const handleNewImage = () => {
     setOriginalImage(null);
