@@ -86,7 +86,22 @@ const OUTPUT_FORMATS: Record<
   webp: { label: "WebP", mime: "image/webp", ext: "webp", lossy: true, transparent: true, hint: "menor tamanho, moderno" },
 };
 
+type FocusKey =
+  | "top-left" | "top" | "top-right"
+  | "left" | "center" | "right"
+  | "bottom-left" | "bottom" | "bottom-right";
 
+const FOCUS_POINTS: Record<FocusKey, { label: string; x: number; y: number }> = {
+  "top-left": { label: "Topo esq.", x: 0, y: 0 },
+  "top": { label: "Topo", x: 0.5, y: 0 },
+  "top-right": { label: "Topo dir.", x: 1, y: 0 },
+  "left": { label: "Esquerda", x: 0, y: 0.5 },
+  "center": { label: "Centro", x: 0.5, y: 0.5 },
+  "right": { label: "Direita", x: 1, y: 0.5 },
+  "bottom-left": { label: "Base esq.", x: 0, y: 1 },
+  "bottom": { label: "Base", x: 0.5, y: 1 },
+  "bottom-right": { label: "Base dir.", x: 1, y: 1 },
+};
 
 export const ResizeTab = () => {
   const [selectedSize, setSelectedSize] = useState<keyof typeof SIZE_PRESETS>("youtube");
@@ -107,6 +122,7 @@ export const ResizeTab = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [outputFormat, setOutputFormat] = useState<OutputFormat>("jpg");
   const [quality, setQuality] = useState(90);
+  const [focus, setFocus] = useState<FocusKey>("center");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -116,6 +132,40 @@ export const ResizeTab = () => {
       ? canvas.toDataURL(fmt.mime, quality / 100)
       : canvas.toDataURL(fmt.mime);
   };
+
+  const drawToCanvas = (img: HTMLImageElement) => {
+    const preset = SIZE_PRESETS[selectedSize];
+    const point = FOCUS_POINTS[focus];
+    const canvas = document.createElement("canvas");
+    canvas.width = preset.width;
+    canvas.height = preset.height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    if (!OUTPUT_FORMATS[outputFormat].transparent) {
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, preset.width, preset.height);
+    }
+    const scale = Math.max(preset.width / img.width, preset.height / img.height);
+    const w = img.width * scale;
+    const h = img.height * scale;
+    const x = (preset.width - w) * point.x;
+    const y = (preset.height - h) * point.y;
+    ctx.drawImage(img, x, y, w, h);
+    return canvas;
+  };
+
+  const renderFromDataUrl = (dataUrl: string): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = drawToCanvas(img);
+        if (!canvas) return reject(new Error("Canvas error"));
+        resolve(exportCanvas(canvas));
+      };
+      img.onerror = () => reject(new Error("Image load error"));
+      img.src = dataUrl;
+    });
+
 
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
