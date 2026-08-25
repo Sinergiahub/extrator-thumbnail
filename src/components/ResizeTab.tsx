@@ -375,7 +375,7 @@ export const ResizeTab = () => {
               </div>
               <h3 className="font-semibold mb-2">Download Direto</h3>
               <p className="text-sm text-muted-foreground">
-                Baixe em JPG com 90% de qualidade
+                Escolha JPG, PNG ou WebP com controle de qualidade
               </p>
             </Card>
 
