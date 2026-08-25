@@ -154,8 +154,24 @@ export const ResizeTab = () => {
   const [wmLogoVersion, setWmLogoVersion] = useState(0);
   const wmLogoImgRef = useRef<HTMLImageElement | null>(null);
   const wmLogoInputRef = useRef<HTMLInputElement>(null);
+  const [customWidth, setCustomWidth] = useState(1200);
+  const [customHeight, setCustomHeight] = useState(630);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  const clampDim = (n: number) => Math.min(8000, Math.max(16, Math.round(n) || 16));
+
+  const activePreset: SizePreset =
+    selectedSize === "custom"
+      ? {
+          label: `Personalizado (${clampDim(customWidth)}×${clampDim(customHeight)})`,
+          width: clampDim(customWidth),
+          height: clampDim(customHeight),
+          aspectRatio: `${clampDim(customWidth)}:${clampDim(customHeight)}`,
+        }
+      : SIZE_PRESETS[selectedSize] ?? SIZE_PRESETS["youtube"];
+
+
 
   const exportCanvas = (canvas: HTMLCanvasElement) => {
     const fmt = OUTPUT_FORMATS[outputFormat];
