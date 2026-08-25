@@ -749,6 +749,175 @@ export const ResizeTab = () => {
               )}
             </div>
 
+            <div className="mt-6 pt-6 border-t border-border">
+              <div className="flex items-center justify-center gap-3 mb-1">
+                <p className="text-sm font-semibold">💧 Marca d'água</p>
+                <button
+                  type="button"
+                  onClick={() => setWmEnabled((v) => !v)}
+                  className={`px-3 py-1 rounded-full border-2 text-[11px] font-semibold transition-all duration-300 hover:scale-105 ${
+                    wmEnabled
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border text-muted-foreground hover:border-primary"
+                  }`}
+                >
+                  {wmEnabled ? "Ativada" : "Desativada"}
+                </button>
+              </div>
+              <p className="text-[11px] text-muted-foreground mb-3 text-center">
+                Adicione um texto ou logo sobre as imagens exportadas
+              </p>
+
+              {wmEnabled && (
+                <div className="animate-fade-in space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    {([
+                      { key: "text" as WatermarkType, label: "Texto", hint: "escreva o texto" },
+                      { key: "logo" as WatermarkType, label: "Logo", hint: "envie uma imagem" },
+                    ]).map((opt) => (
+                      <button
+                        key={opt.key}
+                        type="button"
+                        onClick={() => setWmType(opt.key)}
+                        className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-300 hover:scale-105 ${
+                          wmType === opt.key
+                            ? "border-primary bg-primary/10 text-foreground"
+                            : "border-border hover:border-primary"
+                        }`}
+                      >
+                        {opt.label}
+                        <span className="block text-[10px] text-muted-foreground font-normal">
+                          {opt.hint}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {wmType === "text" ? (
+                    <div className="flex flex-col sm:flex-row items-center gap-3">
+                      <input
+                        type="text"
+                        value={wmText}
+                        onChange={(e) => setWmText(e.target.value)}
+                        placeholder="Seu texto ou @usuario"
+                        className="flex-1 w-full h-10 px-3 rounded-md border-2 border-border bg-background text-sm focus:border-primary outline-none transition-colors"
+                      />
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs font-medium" htmlFor="wm-color">
+                          Cor:
+                        </label>
+                        <input
+                          id="wm-color"
+                          type="color"
+                          value={wmColor}
+                          onChange={(e) => setWmColor(e.target.value)}
+                          className="h-9 w-14 rounded-md border-2 border-border bg-transparent cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-3">
+                      <input
+                        ref={wmLogoInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const reader = new FileReader();
+                          reader.onload = () => setWmLogo(reader.result as string);
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                      <div className="flex items-center gap-3">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => wmLogoInputRef.current?.click()}
+                          className="border-2 border-primary hover:scale-105 transition-all duration-300"
+                        >
+                          {wmLogo ? "Trocar logo" : "Selecionar logo (PNG)"}
+                        </Button>
+                        {wmLogo && (
+                          <>
+                            <img
+                              src={wmLogo}
+                              alt="Prévia do logo da marca d'água"
+                              className="h-10 w-auto rounded border border-border bg-muted/30 p-1"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setWmLogo(null)}
+                              className="text-xs text-muted-foreground hover:text-primary underline"
+                            >
+                              remover
+                            </button>
+                          </>
+                        )}
+                      </div>
+                      {!wmLogo && (
+                        <p className="text-[10px] text-muted-foreground">
+                          Dica: use PNG com fundo transparente
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  <div>
+                    <p className="text-xs font-medium mb-2 text-center">Posição</p>
+                    <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto">
+                      {Object.keys(WM_POSITIONS).map((key) => (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => setWmPosition(key)}
+                          className={`py-2 rounded-md border-2 text-[10px] font-medium transition-all duration-300 hover:scale-105 ${
+                            wmPosition === key
+                              ? "border-primary bg-primary/10 text-foreground"
+                              : "border-border hover:border-primary text-muted-foreground"
+                          }`}
+                        >
+                          {WM_POSITIONS[key].label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <div className="flex justify-between text-xs font-medium mb-2">
+                        <span>Tamanho</span>
+                        <span className="text-primary">{wmScale}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={3}
+                        max={60}
+                        value={wmScale}
+                        onChange={(e) => setWmScale(Number(e.target.value))}
+                        className="w-full accent-primary cursor-pointer"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-xs font-medium mb-2">
+                        <span>Opacidade</span>
+                        <span className="text-primary">{wmOpacity}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={10}
+                        max={100}
+                        value={wmOpacity}
+                        onChange={(e) => setWmOpacity(Number(e.target.value))}
+                        className="w-full accent-primary cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
 
             <div className="mt-6 pt-6 border-t border-border">
               <p className="text-sm font-semibold mb-3 text-center">📐 Tabela completa de tamanhos recomendados</p>
