@@ -165,7 +165,7 @@ export const ResizeTab = () => {
   };
 
   const drawToCanvas = (img: HTMLImageElement) => {
-    const preset = SIZE_PRESETS[selectedSize];
+    const preset = activePreset;
     const point = FOCUS_POINTS[focus];
     const canvas = document.createElement("canvas");
     canvas.width = preset.width;
@@ -286,7 +286,7 @@ export const ResizeTab = () => {
       return;
     }
 
-    const preset = SIZE_PRESETS[selectedSize];
+    const preset = activePreset;
 
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -416,7 +416,7 @@ export const ResizeTab = () => {
       setResizedImage(null);
       toast({
         title: "Lote processado!",
-        description: `${results.length} imagens redimensionadas para ${SIZE_PRESETS[selectedSize].width}×${SIZE_PRESETS[selectedSize].height}px`,
+        description: `${results.length} imagens redimensionadas para ${activePreset.width}×${activePreset.height}px`,
       });
     } catch (err) {
       toast({
@@ -431,7 +431,7 @@ export const ResizeTab = () => {
 
   const handleDownloadZip = async () => {
     if (batchItems.length === 0) return;
-    const preset = SIZE_PRESETS[selectedSize];
+    const preset = activePreset;
     const ext = OUTPUT_FORMATS[outputFormat].ext;
     const zip = new JSZip();
     batchItems.forEach((item) => {
@@ -449,7 +449,7 @@ export const ResizeTab = () => {
 
   const handleDownload = () => {
     if (!resizedImage) return;
-    const preset = SIZE_PRESETS[selectedSize];
+    const preset = activePreset;
     const link = document.createElement("a");
     link.download = `image-${preset.width}x${preset.height}.${OUTPUT_FORMATS[outputFormat].ext}`;
     link.href = resizedImage;
@@ -483,7 +483,7 @@ export const ResizeTab = () => {
               {batchItems.length} imagens redimensionadas
             </h2>
             <p className="text-muted-foreground text-sm">
-              {SIZE_PRESETS[selectedSize].label}
+              {activePreset.label}
             </p>
           </div>
 
@@ -502,7 +502,7 @@ export const ResizeTab = () => {
               <Card key={idx} className="p-3 space-y-2 transition-all duration-300 hover:scale-105 hover:border-primary hover:border-2 hover:shadow-lg hover:shadow-primary/20">
                 <div
                   className="bg-muted rounded-lg overflow-hidden flex items-center justify-center"
-                  style={{ aspectRatio: `${SIZE_PRESETS[selectedSize].width} / ${SIZE_PRESETS[selectedSize].height}` }}
+                  style={{ aspectRatio: `${activePreset.width} / ${activePreset.height}` }}
                 >
                   <img src={item.resized} alt={item.name} className="w-full h-full object-contain" />
                 </div>
@@ -1093,10 +1093,10 @@ export const ResizeTab = () => {
               <div className="flex justify-between items-center">
                 <h3 className="font-semibold">Imagem Redimensionada</h3>
                 <span className="text-xs text-muted-foreground">
-                  {SIZE_PRESETS[selectedSize].width} × {SIZE_PRESETS[selectedSize].height}
+                  {activePreset.width} × {activePreset.height}
                 </span>
               </div>
-              <div className="bg-muted rounded-lg overflow-hidden flex items-center justify-center" style={{ aspectRatio: `${SIZE_PRESETS[selectedSize].width} / ${SIZE_PRESETS[selectedSize].height}` }}>
+              <div className="bg-muted rounded-lg overflow-hidden flex items-center justify-center" style={{ aspectRatio: `${activePreset.width} / ${activePreset.height}` }}>
                 <img
                   src={resizedImage || ""}
                   alt="Resized"
