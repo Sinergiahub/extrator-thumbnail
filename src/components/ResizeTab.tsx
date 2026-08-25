@@ -447,23 +447,46 @@ export const ResizeTab = () => {
     }
   };
 
+  const sanitize = (s: string) => s.replace(/[\\/:*?"<>|]+/g, "").trim();
+
+  const buildFileName = (originalName: string, index: number) => {
+    const ext = OUTPUT_FORMATS[outputFormat].ext;
+    const preset = activePreset;
+    const base =
+      nameMode === "sequence"
+        ? sanitize(baseName) || "imagem"
+        : sanitize(originalName) || `imagem-${index + 1}`;
+    const number =
+      nameMode === "sequence" || autoNumber
+        ? `-${String(startNumber + index).padStart(padding, "0")}`
+        : "";
+    const dims = includeDims ? `-${preset.width}x${preset.height}` : "";
+    return `${sanitize(prefix)}${base}${number}${dims}${sanitize(suffix)}.${ext}`;
+  };
+
   const handleDownloadZip = async () => {
     if (batchItems.length === 0) return;
     const preset = activePreset;
     const ext = OUTPUT_FORMATS[outputFormat].ext;
     const zip = new JSZip();
-    batchItems.forEach((item) => {
+    const used = new Map<string, number>();
+    batchItems.forEach((item, idx) => {
       const base64 = item.resized.split(",")[1];
-      zip.file(`${item.name}-${preset.width}x${preset.height}.${ext}`, base64, { base64: true });
+      let name = buildFileName(item.name, idx);
+      const count = used.get(name) ?? 0;
+      used.set(name, count + 1);
+      if (count > 0) name = name.replace(/(\.[^.]+)$/, `-${count + 1}$1`);
+      zip.file(name, base64, { base64: true });
     });
     const blob = await zip.generateAsync({ type: "blob" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.download = `resized-${preset.width}x${preset.height}-${ext}.zip`;
+    link.download = `${sanitize(zipName) || "imagens"}-${preset.width}x${preset.height}-${ext}.zip`;
     link.href = url;
     link.click();
     URL.revokeObjectURL(url);
   };
+
 
   const handleDownload = () => {
     if (!resizedImage) return;
