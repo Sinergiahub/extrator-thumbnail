@@ -75,6 +75,19 @@ const HERO_TABLE: HeroRow[] = [
   { device: "Ultrawide (2560 px)", key: "hero-ultrawide", ratio: "~8:1" },
 ];
 
+type OutputFormat = "jpg" | "png" | "webp";
+
+const OUTPUT_FORMATS: Record<
+  OutputFormat,
+  { label: string; mime: string; ext: string; lossy: boolean; transparent: boolean; hint: string }
+> = {
+  jpg: { label: "JPG", mime: "image/jpeg", ext: "jpg", lossy: true, transparent: false, hint: "leve, sem transparência" },
+  png: { label: "PNG", mime: "image/png", ext: "png", lossy: false, transparent: true, hint: "sem perdas, transparente" },
+  webp: { label: "WebP", mime: "image/webp", ext: "webp", lossy: true, transparent: true, hint: "menor tamanho, moderno" },
+};
+
+
+
 export const ResizeTab = () => {
   const [selectedSize, setSelectedSize] = useState<keyof typeof SIZE_PRESETS>("youtube");
   const [originalImage, setOriginalImage] = useState<string | null>(null);
