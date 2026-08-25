@@ -205,7 +205,49 @@ export const ResizeTab = () => {
     }
 
     ctx.drawImage(img, x, y, w, h);
+    drawWatermark(ctx, preset.width, preset.height);
     return canvas;
+  };
+
+  const drawWatermark = (ctx: CanvasRenderingContext2D, W: number, H: number) => {
+    if (!wmEnabled) return;
+    const pos = WM_POSITIONS[wmPosition] ?? WM_POSITIONS["bottom-right"];
+    const margin = Math.round(Math.min(W, H) * 0.03);
+    ctx.save();
+    ctx.globalAlpha = wmOpacity / 100;
+
+    if (wmType === "logo") {
+      const logo = wmLogoImgRef.current;
+      if (!logo || !logo.width) {
+        ctx.restore();
+        return;
+      }
+      const lw = (W * wmScale) / 100;
+      const lh = (logo.height / logo.width) * lw;
+      const lx = margin + (W - lw - margin * 2) * pos.x;
+      const ly = margin + (H - lh - margin * 2) * pos.y;
+      ctx.drawImage(logo, lx, ly, lw, lh);
+    } else {
+      const text = wmText.trim();
+      if (!text) {
+        ctx.restore();
+        return;
+      }
+      const fontSize = Math.max(10, (H * wmScale) / 100);
+      ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+      ctx.fillStyle = wmColor;
+      ctx.textBaseline = "top";
+      ctx.textAlign = "left";
+      const metrics = ctx.measureText(text);
+      const tw = metrics.width;
+      const th = fontSize * 1.2;
+      const tx = margin + (W - tw - margin * 2) * pos.x;
+      const ty = margin + (H - th - margin * 2) * pos.y;
+      ctx.shadowColor = "rgba(0,0,0,0.5)";
+      ctx.shadowBlur = fontSize * 0.15;
+      ctx.fillText(text, tx, ty);
+    }
+    ctx.restore();
   };
 
 
