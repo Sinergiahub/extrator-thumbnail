@@ -75,6 +75,19 @@ const HERO_TABLE: HeroRow[] = [
   { device: "Ultrawide (2560 px)", key: "hero-ultrawide", ratio: "~8:1" },
 ];
 
+type OutputFormat = "jpg" | "png" | "webp";
+
+const OUTPUT_FORMATS: Record<
+  OutputFormat,
+  { label: string; mime: string; ext: string; lossy: boolean; transparent: boolean; hint: string }
+> = {
+  jpg: { label: "JPG", mime: "image/jpeg", ext: "jpg", lossy: true, transparent: false, hint: "leve, sem transparência" },
+  png: { label: "PNG", mime: "image/png", ext: "png", lossy: false, transparent: true, hint: "sem perdas, transparente" },
+  webp: { label: "WebP", mime: "image/webp", ext: "webp", lossy: true, transparent: true, hint: "menor tamanho, moderno" },
+};
+
+
+
 export const ResizeTab = () => {
   const [selectedSize, setSelectedSize] = useState<keyof typeof SIZE_PRESETS>("youtube");
   const [originalImage, setOriginalImage] = useState<string | null>(null);
@@ -92,8 +105,18 @@ export const ResizeTab = () => {
     { name: string; original: string; resized: string }[]
   >([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [outputFormat, setOutputFormat] = useState<OutputFormat>("jpg");
+  const [quality, setQuality] = useState(90);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  const exportCanvas = (canvas: HTMLCanvasElement) => {
+    const fmt = OUTPUT_FORMATS[outputFormat];
+    return fmt.lossy
+      ? canvas.toDataURL(fmt.mime, quality / 100)
+      : canvas.toDataURL(fmt.mime);
+  };
+
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
@@ -130,8 +153,10 @@ export const ResizeTab = () => {
         const ctx = canvas.getContext("2d");
         
         if (ctx) {
-          ctx.fillStyle = "#000";
-          ctx.fillRect(0, 0, preset.width, preset.height);
+          if (!OUTPUT_FORMATS[outputFormat].transparent) {
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, preset.width, preset.height);
+          }
           
           const scale = Math.max(preset.width / img.width, preset.height / img.height);
           const x = (preset.width - img.width * scale) / 2;
@@ -139,14 +164,17 @@ export const ResizeTab = () => {
           
           ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
           
-          const resized = canvas.toDataURL("image/jpeg", 0.9);
+          const resized = exportCanvas(canvas);
           setResizedImage(resized);
           
           setImageInfo({
-            format: `JPG (90%)`,
+            format: OUTPUT_FORMATS[outputFormat].lossy
+              ? `${OUTPUT_FORMATS[outputFormat].label} (${quality}%)`
+              : OUTPUT_FORMATS[outputFormat].label,
             originalSize: file.size / 1024,
             aspectRatio: preset.aspectRatio,
           });
+
           
           toast({
             title: "Imagem processada!",
@@ -172,8 +200,10 @@ export const ResizeTab = () => {
           canvas.height = preset.height;
           const ctx = canvas.getContext("2d");
           if (!ctx) return reject(new Error("Canvas error"));
-          ctx.fillStyle = "#000";
-          ctx.fillRect(0, 0, preset.width, preset.height);
+          if (!OUTPUT_FORMATS[outputFormat].transparent) {
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, preset.width, preset.height);
+          }
           const scale = Math.max(preset.width / img.width, preset.height / img.height);
           const x = (preset.width - img.width * scale) / 2;
           const y = (preset.height - img.height * scale) / 2;
@@ -181,8 +211,9 @@ export const ResizeTab = () => {
           resolve({
             name: file.name.replace(/\.[^.]+$/, ""),
             original: dataUrl,
-            resized: canvas.toDataURL("image/jpeg", 0.9),
+            resized: exportCanvas(canvas),
           });
+
         };
         img.onerror = () => reject(new Error("Image load error"));
         img.src = dataUrl;
@@ -227,15 +258,16 @@ export const ResizeTab = () => {
   const handleDownloadZip = async () => {
     if (batchItems.length === 0) return;
     const preset = SIZE_PRESETS[selectedSize];
+    const ext = OUTPUT_FORMATS[outputFormat].ext;
     const zip = new JSZip();
     batchItems.forEach((item) => {
       const base64 = item.resized.split(",")[1];
-      zip.file(`${item.name}-${preset.width}x${preset.height}.jpg`, base64, { base64: true });
+      zip.file(`${item.name}-${preset.width}x${preset.height}.${ext}`, base64, { base64: true });
     });
     const blob = await zip.generateAsync({ type: "blob" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.download = `resized-${preset.width}x${preset.height}.zip`;
+    link.download = `resized-${preset.width}x${preset.height}-${ext}.zip`;
     link.href = url;
     link.click();
     URL.revokeObjectURL(url);
@@ -245,10 +277,11 @@ export const ResizeTab = () => {
     if (!resizedImage) return;
     const preset = SIZE_PRESETS[selectedSize];
     const link = document.createElement("a");
-    link.download = `image-${preset.width}x${preset.height}.jpg`;
+    link.download = `image-${preset.width}x${preset.height}.${OUTPUT_FORMATS[outputFormat].ext}`;
     link.href = resizedImage;
     link.click();
   };
+
 
   const handleNewImage = () => {
     setOriginalImage(null);
@@ -342,7 +375,7 @@ export const ResizeTab = () => {
               </div>
               <h3 className="font-semibold mb-2">Download Direto</h3>
               <p className="text-sm text-muted-foreground">
-                Baixe em JPG com 90% de qualidade
+                Escolha JPG, PNG ou WebP com controle de qualidade
               </p>
             </Card>
 
@@ -381,6 +414,56 @@ export const ResizeTab = () => {
                 })}
               </div>
             </div>
+
+            <div className="mb-2">
+              <p className="text-sm font-semibold mb-3 text-center">Formato de saída:</p>
+              <div className="grid grid-cols-3 gap-3">
+                {(Object.keys(OUTPUT_FORMATS) as OutputFormat[]).map((key) => {
+                  const fmt = OUTPUT_FORMATS[key];
+                  const isActive = outputFormat === key;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setOutputFormat(key)}
+                      className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-300 hover:scale-105 ${
+                        isActive
+                          ? "border-primary bg-primary/10 text-foreground"
+                          : "border-border hover:border-primary"
+                      }`}
+                    >
+                      {fmt.label}
+                      <span className="block text-[10px] text-muted-foreground font-normal">
+                        {fmt.hint}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {OUTPUT_FORMATS[outputFormat].lossy && (
+                <div className="mt-4">
+                  <div className="flex justify-between text-xs mb-2">
+                    <span className="font-medium">Qualidade / compressão</span>
+                    <span className="text-primary font-semibold">{quality}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={40}
+                    max={100}
+                    step={5}
+                    value={quality}
+                    onChange={(e) => setQuality(Number(e.target.value))}
+                    className="w-full accent-primary cursor-pointer"
+                  />
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    Menor qualidade = arquivo mais leve
+                  </p>
+                </div>
+              )}
+            </div>
+
+
 
             <div className="mt-6 pt-6 border-t border-border">
               <p className="text-sm font-semibold mb-3 text-center">📐 Tabela completa de tamanhos recomendados</p>
