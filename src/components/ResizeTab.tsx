@@ -92,8 +92,18 @@ export const ResizeTab = () => {
     { name: string; original: string; resized: string }[]
   >([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [outputFormat, setOutputFormat] = useState<OutputFormat>("jpg");
+  const [quality, setQuality] = useState(90);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  const exportCanvas = (canvas: HTMLCanvasElement) => {
+    const fmt = OUTPUT_FORMATS[outputFormat];
+    return fmt.lossy
+      ? canvas.toDataURL(fmt.mime, quality / 100)
+      : canvas.toDataURL(fmt.mime);
+  };
+
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
