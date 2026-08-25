@@ -45,7 +45,26 @@ const SIZE_PRESETS: Record<string, SizePreset> = {
   "hero-ultrawide": { label: "Hero Ultrawide (2560×320)", width: 2560, height: 320, aspectRatio: "~8:1" },
   // Banner largo 3:1
   "banner-3x1": { label: "Banner 3:1 (1920×640)", width: 1920, height: 640, aspectRatio: "3:1" },
+  // Capas sociais
+  "facebook-cover": { label: "Capa Facebook (820×312)", width: 820, height: 312, aspectRatio: "~2,6:1" },
+  "facebook-post": { label: "Post Facebook (1200×630)", width: 1200, height: 630, aspectRatio: "1,91:1" },
+  "linkedin-cover": { label: "Capa LinkedIn (1584×396)", width: 1584, height: 396, aspectRatio: "4:1" },
+  "linkedin-post": { label: "Post LinkedIn (1200×627)", width: 1200, height: 627, aspectRatio: "~1,91:1" },
+  "twitter-cover": { label: "Capa Twitter/X (1500×500)", width: 1500, height: 500, aspectRatio: "3:1" },
+  "twitter-post": { label: "Post Twitter/X (1600×900)", width: 1600, height: 900, aspectRatio: "16:9" },
+  // Stories e TikTok
+  "story-instagram": { label: "Story Instagram / Facebook / Meta (1080×1920)", width: 1080, height: 1920, aspectRatio: "9:16" },
+  "tiktok": { label: "TikTok (1080×1920)", width: 1080, height: 1920, aspectRatio: "9:16" },
+  "tiktok-profile": { label: "Perfil TikTok (200×200)", width: 200, height: 200, aspectRatio: "1:1" },
+  // Anúncios (Google Ads e Meta Ads)
+  "google-medium-rectangle": { label: "Google Ads — 300×250", width: 300, height: 250, aspectRatio: "6:5" },
+  "google-leaderboard": { label: "Google Ads — 728×90", width: 728, height: 90, aspectRatio: "728:90" },
+  "google-wide-skyscraper": { label: "Google Ads — 160×600", width: 160, height: 600, aspectRatio: "4:15" },
+  "google-mobile-banner": { label: "Google Ads — 320×50", width: 320, height: 50, aspectRatio: "32:5" },
+  "google-half-page": { label: "Google Ads — 300×600", width: 300, height: 600, aspectRatio: "1:2" },
+  "meta-feed": { label: "Meta Ads — Feed (1200×628)", width: 1200, height: 628, aspectRatio: "1,91:1" },
 };
+
 
 type PresetGroup = {
   title: string;
@@ -74,6 +93,33 @@ const HERO_TABLE: HeroRow[] = [
   { device: "Full HD (1920 px)", key: "hero-fullhd", ratio: "~6:1" },
   { device: "Ultrawide (2560 px)", key: "hero-ultrawide", ratio: "~8:1" },
 ];
+
+type SocialAdsRow = {
+  network: string;
+  format: string;
+  key: keyof typeof SIZE_PRESETS;
+  ratio: string;
+};
+
+const SOCIAL_ADS_TABLE: SocialAdsRow[] = [
+  { network: "Facebook", format: "Capa", key: "facebook-cover", ratio: "~2,6:1" },
+  { network: "Facebook", format: "Post / Feed", key: "facebook-post", ratio: "1,91:1" },
+  { network: "LinkedIn", format: "Capa", key: "linkedin-cover", ratio: "4:1" },
+  { network: "LinkedIn", format: "Post / Artigo", key: "linkedin-post", ratio: "~1,91:1" },
+  { network: "Twitter/X", format: "Capa", key: "twitter-cover", ratio: "3:1" },
+  { network: "Twitter/X", format: "Post", key: "twitter-post", ratio: "16:9" },
+  { network: "Instagram", format: "Story", key: "story-instagram", ratio: "9:16" },
+  { network: "TikTok", format: "Vídeo", key: "tiktok", ratio: "9:16" },
+  { network: "TikTok", format: "Perfil", key: "tiktok-profile", ratio: "1:1" },
+  { network: "Google Ads", format: "Retângulo Médio", key: "google-medium-rectangle", ratio: "6:5" },
+  { network: "Google Ads", format: "Leaderboard", key: "google-leaderboard", ratio: "728:90" },
+  { network: "Google Ads", format: "Wide Skyscraper", key: "google-wide-skyscraper", ratio: "4:15" },
+  { network: "Google Ads", format: "Mobile Banner", key: "google-mobile-banner", ratio: "32:5" },
+  { network: "Google Ads", format: "Half Page", key: "google-half-page", ratio: "1:2" },
+  { network: "Meta Ads", format: "Feed", key: "meta-feed", ratio: "1,91:1" },
+  { network: "Meta Ads", format: "Story", key: "story-instagram", ratio: "9:16" },
+];
+
 
 type OutputFormat = "jpg" | "png" | "webp";
 
@@ -716,7 +762,7 @@ export const ResizeTab = () => {
               Redimensione Imagens para <span className="text-primary">Redes Sociais</span>
             </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-              Converta qualquer imagem para o tamanho perfeito para thumbnails do YouTube, Reels/Shorts, posts do Instagram, retratos, A4, vertical ou banners
+              Converta qualquer imagem para o tamanho perfeito para thumbnails do YouTube, Reels/Shorts, posts do Instagram, capas do Facebook, LinkedIn, Twitter/X, TikTok, Stories, anúncios do Google Ads e Meta Ads, retratos, A4, vertical ou banners
             </p>
           </div>
 
@@ -735,9 +781,9 @@ export const ResizeTab = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110">
                 <Monitor className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-semibold mb-2">26 Presets</h3>
+              <h3 className="font-semibold mb-2">41 Presets</h3>
               <p className="text-sm text-muted-foreground">
-                YouTube, Instagram, Reels, banners, módulos, aulas, produtos e hero
+                YouTube, Instagram, Reels, TikTok, Stories, capas Facebook/LinkedIn/Twitter, anúncios Google/Meta, banners, módulos, aulas, produtos e hero
               </p>
             </Card>
 
@@ -1265,6 +1311,51 @@ export const ResizeTab = () => {
                               }`}
                             >
                               Usar {preset.width}×{preset.height}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-border">
+              <p className="text-sm font-semibold mb-1 text-center">📱 Capas sociais e anúncios</p>
+              <p className="text-xs text-muted-foreground mb-3 text-center">
+                Tamanhos recomendados para capas, posts, perfis e anúncios pagos.
+              </p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="text-left p-2 font-semibold">Rede</th>
+                      <th className="text-left p-2 font-semibold">Formato</th>
+                      <th className="text-left p-2 font-semibold">Proporção</th>
+                      <th className="text-left p-2 font-semibold">Tamanho</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {SOCIAL_ADS_TABLE.map((row) => {
+                      const preset = SIZE_PRESETS[row.key];
+                      const isActive = selectedSize === row.key;
+                      return (
+                        <tr key={`${row.network}-${row.format}`} className="border-b border-border/50">
+                          <td className="p-2 font-medium">{row.network}</td>
+                          <td className="p-2 text-muted-foreground">{row.format}</td>
+                          <td className="p-2 text-muted-foreground">{row.ratio}</td>
+                          <td className="p-1">
+                            <button
+                              type="button"
+                              onClick={() => setSelectedSize(row.key)}
+                              className={`w-full px-2 py-1.5 rounded border-2 text-xs font-medium transition-all duration-200 hover:scale-105 ${
+                                isActive
+                                  ? "border-primary bg-primary/10 text-foreground"
+                                  : "border-border hover:border-primary"
+                              }`}
+                            >
+                              {preset.width}×{preset.height}
                             </button>
                           </td>
                         </tr>
