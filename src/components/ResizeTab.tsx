@@ -296,7 +296,7 @@ export const ResizeTab = () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSize, outputFormat, quality, focus, originalImage]);
+  }, [selectedSize, outputFormat, quality, focus, fitMode, background, bgColor, originalImage]);
 
 
   const handleBatchUpload = async (files: File[]) => {
