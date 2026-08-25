@@ -762,7 +762,7 @@ export const ResizeTab = () => {
               Redimensione Imagens para <span className="text-primary">Redes Sociais</span>
             </h2>
             <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
-              Converta qualquer imagem para o tamanho perfeito para thumbnails do YouTube, Reels/Shorts, posts do Instagram, retratos, A4, vertical ou banners
+              Converta qualquer imagem para o tamanho perfeito para thumbnails do YouTube, Reels/Shorts, posts do Instagram, capas do Facebook, LinkedIn, Twitter/X, TikTok, Stories, anúncios do Google Ads e Meta Ads, retratos, A4, vertical ou banners
             </p>
           </div>
 
