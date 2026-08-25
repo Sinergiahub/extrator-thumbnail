@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ResizeTab } from "@/components/ResizeTab";
 import { ExtractTab } from "@/components/ExtractTab";
+import { VeedeaPlayer } from "@/components/VeedeaPlayer";
 import { Image, Link2 } from "lucide-react";
 
 const Index = () => {
@@ -56,6 +57,8 @@ const Index = () => {
           </TabsContent>
         </Tabs>
       </main>
+
+      <VeedeaPlayer />
 
       <footer className="border-t border-border mt-16">
         <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
