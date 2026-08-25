@@ -16,6 +16,7 @@ const SIZE_PRESETS: Record<string, SizePreset> = {
   "youtube": { label: "Thumbnail do YouTube (1280×720)", width: 1280, height: 720, aspectRatio: "16:9" },
   "reels": { label: "Reels / Shorts (1080×1920)", width: 1080, height: 1920, aspectRatio: "9:16" },
   "instagram": { label: "Post do Instagram (1080×1080)", width: 1080, height: 1080, aspectRatio: "1:1" },
+  "quadrado-512": { label: "Quadrado (512×512)", width: 512, height: 512, aspectRatio: "1:1" },
   "quadrado-600": { label: "Quadrado (600×600)", width: 600, height: 600, aspectRatio: "1:1" },
   "portrait": { label: "Retrato / Story (730×1024)", width: 730, height: 1024, aspectRatio: "730:1024" },
   "a4": { label: "A4 Retrato (720×1024)", width: 720, height: 1024, aspectRatio: "720:1024" },
@@ -329,9 +330,9 @@ export const ResizeTab = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 transition-transform duration-300 group-hover:scale-110">
                 <Monitor className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="font-semibold mb-2">7 Presets</h3>
+              <h3 className="font-semibold mb-2">26 Presets</h3>
               <p className="text-sm text-muted-foreground">
-                YouTube, Reels, Instagram, Retrato, A4, Vertical e Banner
+                YouTube, Instagram, Reels, banners, módulos, aulas, produtos e hero
               </p>
             </Card>
 
