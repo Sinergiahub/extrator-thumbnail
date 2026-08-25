@@ -105,6 +105,19 @@ const FOCUS_POINTS: Record<FocusKey, { label: string; x: number; y: number }> = 
 
 type FitMode = "cover" | "contain";
 type BackgroundMode = "blur" | "color" | "transparent";
+type WatermarkType = "text" | "logo";
+
+const WM_POSITIONS: Record<string, { label: string; x: number; y: number }> = {
+  "top-left": { label: "Topo esq.", x: 0, y: 0 },
+  "top": { label: "Topo", x: 0.5, y: 0 },
+  "top-right": { label: "Topo dir.", x: 1, y: 0 },
+  "left": { label: "Esquerda", x: 0, y: 0.5 },
+  "center": { label: "Centro", x: 0.5, y: 0.5 },
+  "right": { label: "Direita", x: 1, y: 0.5 },
+  "bottom-left": { label: "Base esq.", x: 0, y: 1 },
+  "bottom": { label: "Base", x: 0.5, y: 1 },
+  "bottom-right": { label: "Base dir.", x: 1, y: 1 },
+};
 
 
 export const ResizeTab = () => {
@@ -130,6 +143,17 @@ export const ResizeTab = () => {
   const [fitMode, setFitMode] = useState<FitMode>("cover");
   const [background, setBackground] = useState<BackgroundMode>("blur");
   const [bgColor, setBgColor] = useState("#000000");
+  const [wmEnabled, setWmEnabled] = useState(false);
+  const [wmType, setWmType] = useState<WatermarkType>("text");
+  const [wmText, setWmText] = useState("SinergIA Club");
+  const [wmColor, setWmColor] = useState("#ffffff");
+  const [wmOpacity, setWmOpacity] = useState(60);
+  const [wmScale, setWmScale] = useState(20);
+  const [wmPosition, setWmPosition] = useState("bottom-right");
+  const [wmLogo, setWmLogo] = useState<string | null>(null);
+  const [wmLogoVersion, setWmLogoVersion] = useState(0);
+  const wmLogoImgRef = useRef<HTMLImageElement | null>(null);
+  const wmLogoInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -182,7 +206,49 @@ export const ResizeTab = () => {
     }
 
     ctx.drawImage(img, x, y, w, h);
+    drawWatermark(ctx, preset.width, preset.height);
     return canvas;
+  };
+
+  const drawWatermark = (ctx: CanvasRenderingContext2D, W: number, H: number) => {
+    if (!wmEnabled) return;
+    const pos = WM_POSITIONS[wmPosition] ?? WM_POSITIONS["bottom-right"];
+    const margin = Math.round(Math.min(W, H) * 0.03);
+    ctx.save();
+    ctx.globalAlpha = wmOpacity / 100;
+
+    if (wmType === "logo") {
+      const logo = wmLogoImgRef.current;
+      if (!logo || !logo.width) {
+        ctx.restore();
+        return;
+      }
+      const lw = (W * wmScale) / 100;
+      const lh = (logo.height / logo.width) * lw;
+      const lx = margin + (W - lw - margin * 2) * pos.x;
+      const ly = margin + (H - lh - margin * 2) * pos.y;
+      ctx.drawImage(logo, lx, ly, lw, lh);
+    } else {
+      const text = wmText.trim();
+      if (!text) {
+        ctx.restore();
+        return;
+      }
+      const fontSize = Math.max(10, (H * wmScale) / 100);
+      ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+      ctx.fillStyle = wmColor;
+      ctx.textBaseline = "top";
+      ctx.textAlign = "left";
+      const metrics = ctx.measureText(text);
+      const tw = metrics.width;
+      const th = fontSize * 1.2;
+      const tx = margin + (W - tw - margin * 2) * pos.x;
+      const ty = margin + (H - th - margin * 2) * pos.y;
+      ctx.shadowColor = "rgba(0,0,0,0.5)";
+      ctx.shadowBlur = fontSize * 0.15;
+      ctx.fillText(text, tx, ty);
+    }
+    ctx.restore();
   };
 
 
@@ -296,7 +362,39 @@ export const ResizeTab = () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSize, outputFormat, quality, focus, fitMode, background, bgColor, originalImage]);
+  }, [
+    selectedSize,
+    outputFormat,
+    quality,
+    focus,
+    fitMode,
+    background,
+    bgColor,
+    originalImage,
+    wmEnabled,
+    wmType,
+    wmText,
+    wmColor,
+    wmOpacity,
+    wmScale,
+    wmPosition,
+    wmLogo,
+    wmLogoVersion,
+  ]);
+
+  // Carrega o logo da marca d'água
+  useEffect(() => {
+    if (!wmLogo) {
+      wmLogoImgRef.current = null;
+      return;
+    }
+    const img = new Image();
+    img.onload = () => {
+      wmLogoImgRef.current = img;
+      setWmLogoVersion((v) => v + 1);
+    };
+    img.src = wmLogo;
+  }, [wmLogo]);
 
 
   const handleBatchUpload = async (files: File[]) => {
@@ -647,6 +745,175 @@ export const ResizeTab = () => {
                       <span className="text-xs text-muted-foreground uppercase">{bgColor}</span>
                     </div>
                   )}
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-border">
+              <div className="flex items-center justify-center gap-3 mb-1">
+                <p className="text-sm font-semibold">💧 Marca d'água</p>
+                <button
+                  type="button"
+                  onClick={() => setWmEnabled((v) => !v)}
+                  className={`px-3 py-1 rounded-full border-2 text-[11px] font-semibold transition-all duration-300 hover:scale-105 ${
+                    wmEnabled
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border text-muted-foreground hover:border-primary"
+                  }`}
+                >
+                  {wmEnabled ? "Ativada" : "Desativada"}
+                </button>
+              </div>
+              <p className="text-[11px] text-muted-foreground mb-3 text-center">
+                Adicione um texto ou logo sobre as imagens exportadas
+              </p>
+
+              {wmEnabled && (
+                <div className="animate-fade-in space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    {([
+                      { key: "text" as WatermarkType, label: "Texto", hint: "escreva o texto" },
+                      { key: "logo" as WatermarkType, label: "Logo", hint: "envie uma imagem" },
+                    ]).map((opt) => (
+                      <button
+                        key={opt.key}
+                        type="button"
+                        onClick={() => setWmType(opt.key)}
+                        className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-300 hover:scale-105 ${
+                          wmType === opt.key
+                            ? "border-primary bg-primary/10 text-foreground"
+                            : "border-border hover:border-primary"
+                        }`}
+                      >
+                        {opt.label}
+                        <span className="block text-[10px] text-muted-foreground font-normal">
+                          {opt.hint}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {wmType === "text" ? (
+                    <div className="flex flex-col sm:flex-row items-center gap-3">
+                      <input
+                        type="text"
+                        value={wmText}
+                        onChange={(e) => setWmText(e.target.value)}
+                        placeholder="Seu texto ou @usuario"
+                        className="flex-1 w-full h-10 px-3 rounded-md border-2 border-border bg-background text-sm focus:border-primary outline-none transition-colors"
+                      />
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs font-medium" htmlFor="wm-color">
+                          Cor:
+                        </label>
+                        <input
+                          id="wm-color"
+                          type="color"
+                          value={wmColor}
+                          onChange={(e) => setWmColor(e.target.value)}
+                          className="h-9 w-14 rounded-md border-2 border-border bg-transparent cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-3">
+                      <input
+                        ref={wmLogoInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const reader = new FileReader();
+                          reader.onload = () => setWmLogo(reader.result as string);
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                      <div className="flex items-center gap-3">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => wmLogoInputRef.current?.click()}
+                          className="border-2 border-primary hover:scale-105 transition-all duration-300"
+                        >
+                          {wmLogo ? "Trocar logo" : "Selecionar logo (PNG)"}
+                        </Button>
+                        {wmLogo && (
+                          <>
+                            <img
+                              src={wmLogo}
+                              alt="Prévia do logo da marca d'água"
+                              className="h-10 w-auto rounded border border-border bg-muted/30 p-1"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setWmLogo(null)}
+                              className="text-xs text-muted-foreground hover:text-primary underline"
+                            >
+                              remover
+                            </button>
+                          </>
+                        )}
+                      </div>
+                      {!wmLogo && (
+                        <p className="text-[10px] text-muted-foreground">
+                          Dica: use PNG com fundo transparente
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  <div>
+                    <p className="text-xs font-medium mb-2 text-center">Posição</p>
+                    <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto">
+                      {Object.keys(WM_POSITIONS).map((key) => (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => setWmPosition(key)}
+                          className={`py-2 rounded-md border-2 text-[10px] font-medium transition-all duration-300 hover:scale-105 ${
+                            wmPosition === key
+                              ? "border-primary bg-primary/10 text-foreground"
+                              : "border-border hover:border-primary text-muted-foreground"
+                          }`}
+                        >
+                          {WM_POSITIONS[key].label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <div className="flex justify-between text-xs font-medium mb-2">
+                        <span>Tamanho</span>
+                        <span className="text-primary">{wmScale}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={3}
+                        max={60}
+                        value={wmScale}
+                        onChange={(e) => setWmScale(Number(e.target.value))}
+                        className="w-full accent-primary cursor-pointer"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-xs font-medium mb-2">
+                        <span>Opacidade</span>
+                        <span className="text-primary">{wmOpacity}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={10}
+                        max={100}
+                        value={wmOpacity}
+                        onChange={(e) => setWmOpacity(Number(e.target.value))}
+                        className="w-full accent-primary cursor-pointer"
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
