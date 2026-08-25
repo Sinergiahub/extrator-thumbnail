@@ -382,6 +382,56 @@ export const ResizeTab = () => {
               </div>
             </div>
 
+            <div className="mb-2">
+              <p className="text-sm font-semibold mb-3 text-center">Formato de saída:</p>
+              <div className="grid grid-cols-3 gap-3">
+                {(Object.keys(OUTPUT_FORMATS) as OutputFormat[]).map((key) => {
+                  const fmt = OUTPUT_FORMATS[key];
+                  const isActive = outputFormat === key;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setOutputFormat(key)}
+                      className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-300 hover:scale-105 ${
+                        isActive
+                          ? "border-primary bg-primary/10 text-foreground"
+                          : "border-border hover:border-primary"
+                      }`}
+                    >
+                      {fmt.label}
+                      <span className="block text-[10px] text-muted-foreground font-normal">
+                        {fmt.hint}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {OUTPUT_FORMATS[outputFormat].lossy && (
+                <div className="mt-4">
+                  <div className="flex justify-between text-xs mb-2">
+                    <span className="font-medium">Qualidade / compressão</span>
+                    <span className="text-primary font-semibold">{quality}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={40}
+                    max={100}
+                    step={5}
+                    value={quality}
+                    onChange={(e) => setQuality(Number(e.target.value))}
+                    className="w-full accent-primary cursor-pointer"
+                  />
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    Menor qualidade = arquivo mais leve
+                  </p>
+                </div>
+              )}
+            </div>
+
+
+
             <div className="mt-6 pt-6 border-t border-border">
               <p className="text-sm font-semibold mb-3 text-center">📐 Tabela completa de tamanhos recomendados</p>
               <div className="overflow-x-auto">
