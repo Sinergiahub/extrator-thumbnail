@@ -143,6 +143,16 @@ export const ResizeTab = () => {
   const [fitMode, setFitMode] = useState<FitMode>("cover");
   const [background, setBackground] = useState<BackgroundMode>("blur");
   const [bgColor, setBgColor] = useState("#000000");
+  const [wmEnabled, setWmEnabled] = useState(false);
+  const [wmType, setWmType] = useState<WatermarkType>("text");
+  const [wmText, setWmText] = useState("SinergIA Club");
+  const [wmColor, setWmColor] = useState("#ffffff");
+  const [wmOpacity, setWmOpacity] = useState(60);
+  const [wmScale, setWmScale] = useState(20);
+  const [wmPosition, setWmPosition] = useState("bottom-right");
+  const [wmLogo, setWmLogo] = useState<string | null>(null);
+  const wmLogoImgRef = useRef<HTMLImageElement | null>(null);
+  const wmLogoInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
