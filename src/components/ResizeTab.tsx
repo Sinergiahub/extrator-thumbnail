@@ -361,7 +361,39 @@ export const ResizeTab = () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSize, outputFormat, quality, focus, fitMode, background, bgColor, originalImage]);
+  }, [
+    selectedSize,
+    outputFormat,
+    quality,
+    focus,
+    fitMode,
+    background,
+    bgColor,
+    originalImage,
+    wmEnabled,
+    wmType,
+    wmText,
+    wmColor,
+    wmOpacity,
+    wmScale,
+    wmPosition,
+    wmLogo,
+    wmLogoVersion,
+  ]);
+
+  // Carrega o logo da marca d'água
+  useEffect(() => {
+    if (!wmLogo) {
+      wmLogoImgRef.current = null;
+      return;
+    }
+    const img = new Image();
+    img.onload = () => {
+      wmLogoImgRef.current = img;
+      setWmLogoVersion((v) => v + 1);
+    };
+    img.src = wmLogo;
+  }, [wmLogo]);
 
 
   const handleBatchUpload = async (files: File[]) => {
