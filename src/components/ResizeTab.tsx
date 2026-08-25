@@ -569,6 +569,87 @@ export const ResizeTab = () => {
               </p>
             </div>
 
+            <div className="mt-6 pt-6 border-t border-border">
+              <p className="text-sm font-semibold mb-1 text-center">🖼️ Enquadramento e fundo</p>
+              <p className="text-[11px] text-muted-foreground mb-3 text-center">
+                Escolha entre cortar a imagem ou encaixá-la inteira preenchendo as áreas vazias
+              </p>
+
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {([
+                  { key: "cover" as FitMode, label: "Preencher (cortar)", hint: "sem áreas vazias" },
+                  { key: "contain" as FitMode, label: "Encaixar (imagem inteira)", hint: "gera áreas vazias" },
+                ]).map((opt) => (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    onClick={() => setFitMode(opt.key)}
+                    className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-300 hover:scale-105 ${
+                      fitMode === opt.key
+                        ? "border-primary bg-primary/10 text-foreground"
+                        : "border-border hover:border-primary"
+                    }`}
+                  >
+                    {opt.label}
+                    <span className="block text-[10px] text-muted-foreground font-normal">
+                      {opt.hint}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {fitMode === "contain" && (
+                <div className="animate-fade-in">
+                  <p className="text-xs font-medium mb-2">Fundo das áreas vazias:</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    {([
+                      { key: "blur" as BackgroundMode, label: "Blur", hint: "imagem desfocada" },
+                      { key: "color" as BackgroundMode, label: "Cor sólida", hint: "escolha a cor" },
+                      { key: "transparent" as BackgroundMode, label: "Transparente", hint: "PNG / WebP" },
+                    ]).map((opt) => {
+                      const disabled =
+                        opt.key === "transparent" && !OUTPUT_FORMATS[outputFormat].transparent;
+                      return (
+                        <button
+                          key={opt.key}
+                          type="button"
+                          disabled={disabled}
+                          onClick={() => setBackground(opt.key)}
+                          className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-300 ${
+                            disabled
+                              ? "border-border opacity-40 cursor-not-allowed"
+                              : background === opt.key
+                                ? "border-primary bg-primary/10 text-foreground hover:scale-105"
+                                : "border-border hover:border-primary hover:scale-105"
+                          }`}
+                        >
+                          {opt.label}
+                          <span className="block text-[10px] text-muted-foreground font-normal">
+                            {disabled ? "requer PNG/WebP" : opt.hint}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {background === "color" && (
+                    <div className="mt-4 flex items-center justify-center gap-3">
+                      <label className="text-xs font-medium" htmlFor="bg-color">
+                        Cor do fundo:
+                      </label>
+                      <input
+                        id="bg-color"
+                        type="color"
+                        value={bgColor}
+                        onChange={(e) => setBgColor(e.target.value)}
+                        className="h-9 w-16 rounded-md border-2 border-border bg-transparent cursor-pointer"
+                      />
+                      <span className="text-xs text-muted-foreground uppercase">{bgColor}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
 
             <div className="mt-6 pt-6 border-t border-border">
