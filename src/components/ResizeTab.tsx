@@ -172,8 +172,10 @@ export const ResizeTab = () => {
           canvas.height = preset.height;
           const ctx = canvas.getContext("2d");
           if (!ctx) return reject(new Error("Canvas error"));
-          ctx.fillStyle = "#000";
-          ctx.fillRect(0, 0, preset.width, preset.height);
+          if (!OUTPUT_FORMATS[outputFormat].transparent) {
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, preset.width, preset.height);
+          }
           const scale = Math.max(preset.width / img.width, preset.height / img.height);
           const x = (preset.width - img.width * scale) / 2;
           const y = (preset.height - img.height * scale) / 2;
@@ -181,8 +183,9 @@ export const ResizeTab = () => {
           resolve({
             name: file.name.replace(/\.[^.]+$/, ""),
             original: dataUrl,
-            resized: canvas.toDataURL("image/jpeg", 0.9),
+            resized: exportCanvas(canvas),
           });
+
         };
         img.onerror = () => reject(new Error("Image load error"));
         img.src = dataUrl;
