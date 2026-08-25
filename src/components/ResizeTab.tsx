@@ -196,27 +196,11 @@ export const ResizeTab = () => {
       img.onload = () => {
         setOriginalImage(event.target?.result as string);
         setOriginalDimensions({ width: img.width, height: img.height });
-        
-        const canvas = document.createElement("canvas");
-        canvas.width = preset.width;
-        canvas.height = preset.height;
-        const ctx = canvas.getContext("2d");
-        
-        if (ctx) {
-          if (!OUTPUT_FORMATS[outputFormat].transparent) {
-            ctx.fillStyle = "#000";
-            ctx.fillRect(0, 0, preset.width, preset.height);
-          }
-          
-          const scale = Math.max(preset.width / img.width, preset.height / img.height);
-          const x = (preset.width - img.width * scale) / 2;
-          const y = (preset.height - img.height * scale) / 2;
-          
-          ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-          
-          const resized = exportCanvas(canvas);
-          setResizedImage(resized);
-          
+
+        const canvas = drawToCanvas(img);
+        if (canvas) {
+          setResizedImage(exportCanvas(canvas));
+
           setImageInfo({
             format: OUTPUT_FORMATS[outputFormat].lossy
               ? `${OUTPUT_FORMATS[outputFormat].label} (${quality}%)`
@@ -225,7 +209,6 @@ export const ResizeTab = () => {
             aspectRatio: preset.aspectRatio,
           });
 
-          
           toast({
             title: "Imagem processada!",
             description: `Redimensionada para ${preset.width}×${preset.height}px`,
@@ -239,39 +222,50 @@ export const ResizeTab = () => {
 
   const resizeFile = (file: File): Promise<{ name: string; original: string; resized: string }> => {
     return new Promise((resolve, reject) => {
-      const preset = SIZE_PRESETS[selectedSize];
       const reader = new FileReader();
       reader.onload = (event) => {
         const dataUrl = event.target?.result as string;
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          canvas.width = preset.width;
-          canvas.height = preset.height;
-          const ctx = canvas.getContext("2d");
-          if (!ctx) return reject(new Error("Canvas error"));
-          if (!OUTPUT_FORMATS[outputFormat].transparent) {
-            ctx.fillStyle = "#000";
-            ctx.fillRect(0, 0, preset.width, preset.height);
-          }
-          const scale = Math.max(preset.width / img.width, preset.height / img.height);
-          const x = (preset.width - img.width * scale) / 2;
-          const y = (preset.height - img.height * scale) / 2;
-          ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
-          resolve({
-            name: file.name.replace(/\.[^.]+$/, ""),
-            original: dataUrl,
-            resized: exportCanvas(canvas),
-          });
-
-        };
-        img.onerror = () => reject(new Error("Image load error"));
-        img.src = dataUrl;
+        renderFromDataUrl(dataUrl)
+          .then((resized) =>
+            resolve({
+              name: file.name.replace(/\.[^.]+$/, ""),
+              original: dataUrl,
+              resized,
+            })
+          )
+          .catch(reject);
       };
       reader.onerror = () => reject(new Error("File read error"));
       reader.readAsDataURL(file);
     });
   };
+
+  // Reprocessa automaticamente quando tamanho, formato, qualidade ou foco mudam
+  useEffect(() => {
+    let cancelled = false;
+    if (originalImage) {
+      renderFromDataUrl(originalImage)
+        .then((out) => {
+          if (!cancelled) setResizedImage(out);
+        })
+        .catch(() => undefined);
+    } else if (batchItems.length > 0) {
+      Promise.all(
+        batchItems.map((item) =>
+          renderFromDataUrl(item.original).then((resized) => ({ ...item, resized }))
+        )
+      )
+        .then((items) => {
+          if (!cancelled) setBatchItems(items);
+        })
+        .catch(() => undefined);
+    }
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSize, outputFormat, quality, focus, originalImage]);
+
 
   const handleBatchUpload = async (files: File[]) => {
     const valid = files.filter((f) => f.size <= 10 * 1024 * 1024);
