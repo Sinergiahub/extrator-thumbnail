@@ -94,6 +94,33 @@ const HERO_TABLE: HeroRow[] = [
   { device: "Ultrawide (2560 px)", key: "hero-ultrawide", ratio: "~8:1" },
 ];
 
+type SocialAdsRow = {
+  network: string;
+  format: string;
+  key: keyof typeof SIZE_PRESETS;
+  ratio: string;
+};
+
+const SOCIAL_ADS_TABLE: SocialAdsRow[] = [
+  { network: "Facebook", format: "Capa", key: "facebook-cover", ratio: "~2,6:1" },
+  { network: "Facebook", format: "Post / Feed", key: "facebook-post", ratio: "1,91:1" },
+  { network: "LinkedIn", format: "Capa", key: "linkedin-cover", ratio: "4:1" },
+  { network: "LinkedIn", format: "Post / Artigo", key: "linkedin-post", ratio: "~1,91:1" },
+  { network: "Twitter/X", format: "Capa", key: "twitter-cover", ratio: "3:1" },
+  { network: "Twitter/X", format: "Post", key: "twitter-post", ratio: "16:9" },
+  { network: "Instagram", format: "Story", key: "story-instagram", ratio: "9:16" },
+  { network: "TikTok", format: "Vídeo", key: "tiktok", ratio: "9:16" },
+  { network: "TikTok", format: "Perfil", key: "tiktok-profile", ratio: "1:1" },
+  { network: "Google Ads", format: "Retângulo Médio", key: "google-medium-rectangle", ratio: "6:5" },
+  { network: "Google Ads", format: "Leaderboard", key: "google-leaderboard", ratio: "728:90" },
+  { network: "Google Ads", format: "Wide Skyscraper", key: "google-wide-skyscraper", ratio: "4:15" },
+  { network: "Google Ads", format: "Mobile Banner", key: "google-mobile-banner", ratio: "32:5" },
+  { network: "Google Ads", format: "Half Page", key: "google-half-page", ratio: "1:2" },
+  { network: "Meta Ads", format: "Feed", key: "meta-feed", ratio: "1,91:1" },
+  { network: "Meta Ads", format: "Story", key: "story-instagram", ratio: "9:16" },
+];
+
+
 type OutputFormat = "jpg" | "png" | "webp";
 
 const OUTPUT_FORMATS: Record<
