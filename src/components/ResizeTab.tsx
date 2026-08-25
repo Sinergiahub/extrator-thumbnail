@@ -103,6 +103,10 @@ const FOCUS_POINTS: Record<FocusKey, { label: string; x: number; y: number }> = 
   "bottom-right": { label: "Base dir.", x: 1, y: 1 },
 };
 
+type FitMode = "cover" | "contain";
+type BackgroundMode = "blur" | "color" | "transparent";
+
+
 export const ResizeTab = () => {
   const [selectedSize, setSelectedSize] = useState<keyof typeof SIZE_PRESETS>("youtube");
   const [originalImage, setOriginalImage] = useState<string | null>(null);
