@@ -62,7 +62,7 @@ const Index = () => {
 
       <footer className="border-t border-border mt-16">
         <div className="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-          <p>Ferramentas para Thumbnails do YouTube - Ferramentas gratuitas para criadores de conteúdo</p>
+          <p>SINERGIA TOOLS — Tecnologia para transformar suas ideias em resultados.</p>
         </div>
       </footer>
     </div>
